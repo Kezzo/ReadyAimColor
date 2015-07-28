@@ -11,6 +11,9 @@ public class PlayerControls : MonoBehaviour {
 	public string currentBulletID;
 	Dictionary<string,GameObject> bulletsDict = new Dictionary<string,GameObject>();
 
+	public LayerMask layerMaskWALL = new LayerMask();
+	public float shipWidth = 0.0f;
+
 	// Use this for initialization
 	void Start () 
 	{
@@ -25,10 +28,7 @@ public class PlayerControls : MonoBehaviour {
 	// Update is called once per frame
 	void Update () 
 	{
-		float gyroScopeX = Input.acceleration.x;
-		this.transform.Translate((gyroScopeX * sensitivity) * Time.deltaTime, 0.0f, 0.0f);
-		this.transform.position = new Vector3(this.transform.position.x, 0.0f, 0.0f);
-		playerModel.transform.localEulerAngles = new Vector3(0.0f, 0.0f, -(gyroScopeX * 20.0f));
+		checkWallDistanceOnXAxis(Input.acceleration.x);
 
 		if(Input.touchCount > 0)
 		{
@@ -40,12 +40,55 @@ public class PlayerControls : MonoBehaviour {
 			}
 			else if(Input.GetTouch(0).phase == TouchPhase.Began)
 			{
+				/*Ray touchRay = Camera.main.ScreenPointToRay(Input.GetTouch(0).position);
+
+				RaycastHit hit;
+				if(Physics.Raycast(touchRay, out hit, 100.0f, layerMask))
+				{
+					Debug.DrawLine(touchRay.origin,hit.point);
+					Debug.Log(hit.collider.name);*/
+
 				foreach(Transform shootPosition in shootPositionList)
 				{
+					//shootPosition.LookAt(hit.point);
 					GameObject bullet = SimplePool.Spawn(bulletsDict[currentBulletID], shootPosition.position, shootPosition.rotation);
 					bullet.transform.parent = bulletParent;
 				}
 			}
 		}
+	}
+
+	void checkWallDistanceOnXAxis(float gyroScopeX)
+	{
+		RaycastHit wallHit;
+		if(gyroScopeX > 0.0f)
+		{
+			if(Physics.Raycast(this.transform.position, Vector3.right, out wallHit, layerMaskWALL))
+			{
+				Debug.DrawLine(this.transform.position,wallHit.point);
+				if(wallHit.distance > shipWidth)
+				{
+					moveOnXAxis(gyroScopeX);
+				}
+			}
+		}
+		else if(gyroScopeX < 0.0f)
+		{
+			if(Physics.Raycast(this.transform.position, Vector3.left, out wallHit, layerMaskWALL))
+			{
+				Debug.DrawLine(this.transform.position,wallHit.point);
+				if(wallHit.distance > shipWidth)
+				{
+					moveOnXAxis(gyroScopeX);
+				}
+			}
+		}
+		playerModel.transform.localEulerAngles = new Vector3(0.0f, 0.0f, -(gyroScopeX * 20.0f));
+	}
+
+	void moveOnXAxis(float gyroScopeX)
+	{
+		this.transform.Translate((gyroScopeX * sensitivity) * Time.deltaTime, 0.0f, 0.0f);
+		this.transform.position = new Vector3(this.transform.position.x, 0.0f, 0.0f);
 	}
 }
