@@ -14,6 +14,9 @@ public class PlayerControls : MonoBehaviour {
 	public LayerMask layerMaskWALL = new LayerMask();
 	public float shipWidth = 0.0f;
 
+	float timeSinceLastBullet = 0.0f;
+	public float shootingCD = 0.0f;
+
 	// Use this for initialization
 	void Start () 
 	{
@@ -29,6 +32,8 @@ public class PlayerControls : MonoBehaviour {
 	void Update () 
 	{
 		checkWallDistanceOnXAxis(Input.acceleration.x);
+
+		timeSinceLastBullet -= Time.deltaTime;
 
 		if(Input.touchCount > 0)
 		{
@@ -48,11 +53,16 @@ public class PlayerControls : MonoBehaviour {
 					Debug.DrawLine(touchRay.origin,hit.point);
 					Debug.Log(hit.collider.name);*/
 
-				foreach(Transform shootPosition in shootPositionList)
+				if(timeSinceLastBullet < 0.0f)
 				{
-					//shootPosition.LookAt(hit.point);
-					GameObject bullet = SimplePool.Spawn(bulletsDict[currentBulletID], shootPosition.position, shootPosition.rotation);
-					bullet.transform.parent = bulletParent;
+					foreach(Transform shootPosition in shootPositionList)
+					{
+						//shootPosition.LookAt(hit.point);
+
+						GameObject bullet = Instantiate(bulletsDict[currentBulletID], shootPosition.position, shootPosition.rotation) as GameObject;
+						bullet.transform.parent = bulletParent;
+						timeSinceLastBullet = shootingCD;
+					}
 				}
 			}
 		}

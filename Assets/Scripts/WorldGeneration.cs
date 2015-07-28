@@ -1,17 +1,20 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 public class WorldGeneration : MonoBehaviour {
 
 	public float speed = 1.0f;
-	List<GameObject> mapParts = new List<GameObject>();
+	List<MapPart> mapParts = new List<MapPart>();
 	public GameObject mapPartsParent;
 	Vector3 mapPartSpawnPosition;
 
 	public GameObject currentMapPrefab;
 	public float mapPartLength;
 	public int mapPartCount;
+
+	GameObject lastMapPart;
 
 	// Use this for initialization
 	void Start () 
@@ -20,30 +23,67 @@ public class WorldGeneration : MonoBehaviour {
 
 		for(int i=0; i<mapPartCount; i++)
 		{
-			SpawnNewMapPart(new Vector3(0.0f, 0.0f, i * mapPartLength));
+			SpawnMapPart(new Vector3(0.0f, 0.0f, i * mapPartLength), null);
 		}
 	}
 	
 	// Update is called once per frame
 	void Update () 
 	{
-		mapPartsParent.transform.Translate(0.0f, 0.0f, -(1.0f * speed * Time.deltaTime));
-		foreach(GameObject mapPart in mapParts.ToArray())
+		foreach(MapPart mapPart in mapParts.ToArray())
 		{
-			if(mapPart.transform.position.z < -mapPartLength)
+			if(mapPart.mapPartGO.transform.position.z < -mapPartLength)
 			{
-				mapParts.Remove(mapPart);
-				Destroy(mapPart);
-				SpawnNewMapPart(mapPartSpawnPosition);
+				SpawnMapPart(mapPartSpawnPosition, mapPart);
 			}
+			//mapPart.transform.Translate(0.0f, 0.0f, -(1.0f * speed * Time.deltaTime));
 		}
+
+		mapPartsParent.transform.Translate(0.0f, 0.0f, -(1.0f * speed * Time.deltaTime));
 	}
 
-	void SpawnNewMapPart(Vector3 spawnPosition)
+	MapPart CreateMapPart(Vector3 spawnPosition)
 	{
-		GameObject newMapPart = SimplePool.Spawn(currentMapPrefab, spawnPosition, Quaternion.identity);
-		mapParts.Add(newMapPart);
-		newMapPart.transform.parent = mapPartsParent.transform;
+		GameObject createdMapPartGO = Instantiate(currentMapPrefab, spawnPosition, Quaternion.identity) as GameObject;
+		createdMapPartGO.transform.parent = mapPartsParent.transform;
+
+		MapPart createdMapPart = new MapPart(createdMapPartGO, createdMapPartGO.GetComponent<GenerateObstacles>());
+		mapParts.Add(createdMapPart);
+
+		return createdMapPart;
 	}
-	
+
+	void SpawnMapPart(Vector3 spawnPosition, MapPart mapPartToSpawn)
+	{
+		MapPart currentMapPart;
+
+		GameObject currentMapPartGO;
+		if(mapParts.Count < mapPartCount)
+		{
+			currentMapPart = CreateMapPart(spawnPosition);
+			currentMapPartGO = currentMapPart.mapPartGO;
+		}
+		else
+		{
+			//Reposition rather than destroying and instantiating
+			currentMapPart = mapPartToSpawn;
+			currentMapPartGO = currentMapPart.mapPartGO;
+			currentMapPartGO.transform.position = spawnPosition;
+		}
+
+		if(mapParts.Count > 1)
+		{
+			currentMapPart.obstacleGenScript.generateObstacles(0);
+
+			// To eliminated small displacements of mapParts
+			float lastMapPartPosZ = lastMapPart.transform.position.z;
+			if((currentMapPartGO.transform.position.z - lastMapPartPosZ) > mapPartLength)
+			{
+				float correctedZPosition = currentMapPartGO.transform.position.z - ((currentMapPartGO.transform.position.z - lastMapPartPosZ) - mapPartLength);
+				currentMapPartGO.transform.position = new Vector3(0.0f,0.0f, correctedZPosition);
+			}
+		}
+
+		lastMapPart = currentMapPartGO;
+	}
 }

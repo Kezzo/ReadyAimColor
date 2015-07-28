@@ -9,6 +9,7 @@ public class BulletHandling : MonoBehaviour {
 	void Update () 
 	{
 		this.transform.Translate((Vector3.forward * speed) * Time.deltaTime);
+		this.transform.localEulerAngles = new Vector3(0.0f, 0.0f, (this.transform.localEulerAngles.z - (120.0f * Time.deltaTime)));
 
 		if(activeTime > 2.0f)
 		{
