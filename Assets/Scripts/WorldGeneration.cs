@@ -74,6 +74,7 @@ public class WorldGeneration : MonoBehaviour {
 		if(mapParts.Count > 1)
 		{
 			currentMapPart.obstacleGenScript.generateObstacles(0);
+			//print ("generatedObstacles");
 
 			// To eliminated small displacements of mapParts
 			float lastMapPartPosZ = lastMapPart.transform.position.z;
