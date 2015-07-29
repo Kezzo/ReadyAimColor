@@ -1,40 +1,34 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 public class GenerateObstacles : MonoBehaviour {
 
 	public GameObject obstacleFirstRowParent;
-	List<GameObject> obstaclesFirstRow = new List<GameObject>();
+	List<Obstacle> obstaclesFirstRow = new List<Obstacle>();
 
 	public GameObject obstacleSecondRowParent;
-	List<GameObject> obstaclesSecondRow = new List<GameObject>();
-
-	void Start()
-	{
-
-
-//		print (obstaclesFirstRow.Count);
-	}
+	List<Obstacle> obstaclesSecondRow = new List<Obstacle>();
 
 	public void generateObstacles(int difficultyLevel)
 	{
 		if(obstaclesFirstRow.Count < 1  || obstaclesSecondRow.Count < 1)
 		{
-			getObstacleGOs();
+			getObstacles();
 		}
 
 		disableAllObstacles(obstaclesFirstRow);
-		foreach(GameObject obstacle in obstaclesFirstRow)
+		foreach(Obstacle obstacle in obstaclesFirstRow)
 		{
-			obstacle.SetActive(testGeneration());
+			obstacle.obstacleStateScript.setStateAndActive(0);
 		}
 
 		disableAllObstacles(obstaclesSecondRow);
 
-		foreach(GameObject obstacle in obstaclesSecondRow)
+		foreach(Obstacle obstacle in obstaclesSecondRow)
 		{
-			obstacle.SetActive(testGeneration());
+			obstacle.obstacleStateScript.setStateAndActive(1);
 		}
 	}
 
@@ -48,16 +42,17 @@ public class GenerateObstacles : MonoBehaviour {
 
 	}
 
-	void getObstacleGOs()
+	void getObstacles()
 	{
 		foreach(Transform child in obstacleFirstRowParent.transform)
 		{
-			obstaclesFirstRow.Add(child.gameObject);
+			obstaclesFirstRow.Add(new Obstacle(child.gameObject, child.GetComponent<ObstacleState>()));
+			print (obstaclesFirstRow.Last().obstacleStateScript.name);
 		}
 		
 		foreach(Transform child in obstacleSecondRowParent.transform)
 		{
-			obstaclesSecondRow.Add(child.gameObject);
+			obstaclesSecondRow.Add(new Obstacle(child.gameObject, child.GetComponent<ObstacleState>()));
 		}
 	}
 
@@ -78,11 +73,11 @@ public class GenerateObstacles : MonoBehaviour {
 		return returnVal;
 	}
 
-	void disableAllObstacles(List<GameObject> obstacleList)
+	void disableAllObstacles(List<Obstacle> obstacleList)
 	{
-		foreach(GameObject obstacles in obstacleList)
+		foreach(Obstacle obstacles in obstacleList)
 		{
-			obstacles.SetActive(false);
+			obstacles.obstacleGO.SetActive(false);
 		}
 	}
 }

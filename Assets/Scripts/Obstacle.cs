@@ -1,43 +1,27 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Obstacle : MonoBehaviour {
+public class Obstacle {
 
-	public Material[] materials = new Material[3];
-	public GameObject model;
-	MeshRenderer meshRend;
-
-	void Start()
+	private GameObject _obstacleGO;
+	public GameObject obstacleGO
 	{
-		meshRend = model.GetComponent<MeshRenderer>();
+		get { return _obstacleGO; }
+		set { _obstacleGO = value; } 
 	}
-
-	public void setStateAndActive(int stateID)
+	
+	private ObstacleState _obstacleStateScript;
+	public ObstacleState obstacleStateScript
 	{
-		meshRend.material = materials[stateID];
-		switch(stateID)
-		{
-			case 0: setStateRED();
-				break;
-			case 1: setStateGREEN();
-				break;
-			case 2: setStateYELLOW();
-				break;
-		}
+		get { return _obstacleStateScript; }
+		set { _obstacleStateScript = value; } 
 	}
-
-	void setStateRED()
+	
+	public Obstacle(){}
+	
+	public Obstacle(GameObject obstacle, ObstacleState obstacleState)
 	{
-		print("RED");
-	}
-
-	void setStateGREEN()
-	{
-		print("GREEN");
-	}
-
-	void setStateYELLOW()
-	{
-		print("YELLOW");
+		_obstacleGO = obstacle;
+		_obstacleStateScript = obstacleState;
 	}
 }
