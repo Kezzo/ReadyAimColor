@@ -17,14 +17,21 @@ public class PlayerControls : MonoBehaviour {
 	float timeSinceLastBullet = 0.0f;
 	public float shootingCD = 0.0f;
 
+	public enum PlayerColorState{GREEN, YELLOW};
+	public PlayerColorState playerColorState = PlayerColorState.GREEN;
+	public Material[] stateMaterials;
+	MeshRenderer playerMeshRend;
+
 	// Use this for initialization
 	void Start () 
 	{
+		playerMeshRend = playerModel.GetComponent<MeshRenderer>();
+
 		Object[] loadedBullets = Resources.LoadAll("Bullets", typeof(GameObject));
 		for(int i=0; i<loadedBullets.Length; i++)
 		{
 			bulletsDict.Add (loadedBullets[i].name, loadedBullets[i] as GameObject);
-			print ("loaded Bullet: "+loadedBullets[i].name);
+//			print ("loaded Bullet: "+loadedBullets[i].name);
 		}
 	}
 	
@@ -61,9 +68,26 @@ public class PlayerControls : MonoBehaviour {
 
 						GameObject bullet = Instantiate(bulletsDict[currentBulletID], shootPosition.position, shootPosition.rotation) as GameObject;
 						bullet.transform.parent = bulletParent;
+						bullet.GetComponent<BulletHandling>().setBulletState(playerColorState);
 						timeSinceLastBullet = shootingCD;
 					}
 				}
+			}
+		}
+	}
+
+	void handlePlayerStateChange(PlayerColorState newPlayerColorState)
+	{
+		if(playerColorState != newPlayerColorState)
+		{
+			playerColorState = newPlayerColorState;
+			
+			switch(playerColorState)
+			{
+			case PlayerColorState.GREEN: playerMeshRend.material = stateMaterials[0];
+				break;
+			case PlayerColorState.YELLOW: playerMeshRend.material = stateMaterials[1];
+				break;
 			}
 		}
 	}

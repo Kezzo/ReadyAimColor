@@ -19,16 +19,20 @@ public class GenerateObstacles : MonoBehaviour {
 		}
 
 		disableAllObstacles(obstaclesFirstRow);
-		foreach(Obstacle obstacle in obstaclesFirstRow)
+		int[] generatedIDs = new int[6];
+		generatedIDs = generateLevel1Diff();
+
+		for(int i=0; i<obstaclesFirstRow.Count; i++)
 		{
-			obstacle.obstacleStateScript.setStateAndActive(0);
+			obstaclesFirstRow[i].obstacleStateScript.setStateAndActive(generatedIDs[i]);
 		}
 
 		disableAllObstacles(obstaclesSecondRow);
+		generatedIDs = generateLevel1Diff();
 
-		foreach(Obstacle obstacle in obstaclesSecondRow)
+		for(int i=0; i<obstaclesFirstRow.Count; i++)
 		{
-			obstacle.obstacleStateScript.setStateAndActive(1);
+			obstaclesSecondRow[i].obstacleStateScript.setStateAndActive(generatedIDs[i]);
 		}
 	}
 
@@ -37,17 +41,27 @@ public class GenerateObstacles : MonoBehaviour {
 
 	}
 
-	void generateLevel1Diff()
+	int[] generateLevel1Diff()
 	{
+		int[] generatedIDs = new int[6];
 
+		for(int i=0; i<generatedIDs.Length; i++)
+		{
+			generatedIDs[i] = Random.Range(0,4);
+//			print (generatedIDs[i]);
+		}
+
+
+		return generatedIDs;
 	}
 
 	void getObstacles()
 	{
+		//print ("getObstacles");
 		foreach(Transform child in obstacleFirstRowParent.transform)
 		{
 			obstaclesFirstRow.Add(new Obstacle(child.gameObject, child.GetComponent<ObstacleState>()));
-			print (obstaclesFirstRow.Last().obstacleStateScript.name);
+//			print (obstaclesFirstRow.Last().obstacleStateScript.name);
 		}
 		
 		foreach(Transform child in obstacleSecondRowParent.transform)

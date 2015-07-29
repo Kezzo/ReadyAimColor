@@ -7,6 +7,10 @@ public class ObstacleState : MonoBehaviour {
 	public GameObject model;
 	MeshRenderer meshRend;
 
+	public enum ColorState {RED, GREEN, YELLOW, DISABLED};
+
+	ColorState colorState = ColorState.DISABLED;
+
 	public void setStateAndActive(int stateID)
 	{
 		if(meshRend == null)
@@ -14,37 +18,37 @@ public class ObstacleState : MonoBehaviour {
 			meshRend = GetMeshRenderer();
 		}
 
-		meshRend.material = materials[stateID];
-		this.gameObject.SetActive(true);
-
-		switch(stateID)
+		if(stateID < 3)
 		{
-			case 0: setStateRED();
+			meshRend.material = materials[stateID];
+
+			this.gameObject.SetActive(true);
+			
+			switch(stateID)
+			{
+			case 0: colorState = ColorState.RED;
 				break;
-			case 1: setStateGREEN();
+			case 1: colorState = ColorState.GREEN;
 				break;
-			case 2: setStateYELLOW();
+			case 2: colorState = ColorState.YELLOW;
 				break;
+			}
 		}
+		else
+		{
+			this.gameObject.SetActive(false);
+		}
+
+	}
+
+	public ColorState getObstacleState()
+	{
+		ColorState returnColorState = colorState;
+		return returnColorState;
 	}
 
 	MeshRenderer GetMeshRenderer()
 	{
 		return model.GetComponent<MeshRenderer>();
-	}
-
-	void setStateRED()
-	{
-		print("RED");
-	}
-
-	void setStateGREEN()
-	{
-		print("GREEN");
-	}
-
-	void setStateYELLOW()
-	{
-		print("YELLOW");
 	}
 }
