@@ -5,6 +5,7 @@ using System.Linq;
 
 public class WorldGeneration : MonoBehaviour {
 
+	public bool playerIsDead;
 	public float speed = 1.0f;
 	List<MapPart> mapParts = new List<MapPart>();
 	public GameObject mapPartsParent;
@@ -39,7 +40,10 @@ public class WorldGeneration : MonoBehaviour {
 			//mapPart.transform.Translate(0.0f, 0.0f, -(1.0f * speed * Time.deltaTime));
 		}
 
-		mapPartsParent.transform.Translate(0.0f, 0.0f, -(1.0f * speed * Time.deltaTime));
+		if(!playerIsDead)
+		{
+			mapPartsParent.transform.Translate(0.0f, 0.0f, -(1.0f * speed * Time.deltaTime));
+		}
 	}
 
 	MapPart CreateMapPart(Vector3 spawnPosition)

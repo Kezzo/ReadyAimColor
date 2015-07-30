@@ -9,16 +9,10 @@ public class BulletHandling : MonoBehaviour {
 
 	public Material[] stateMaterials;
 	public GameObject bulletModel;
-	MeshRenderer bulletMeshRend;
+	public MeshRenderer bulletMeshRend;
 
 	PlayerControls.PlayerColorState bulletColorState = PlayerControls.PlayerColorState.GREEN;
 
-	void Start()
-	{
-		//print ("Start");
-		bulletMeshRend = bulletModel.GetComponent<MeshRenderer>();
-	}
-	
 	// Update is called once per frame
 	void Update () 
 	{
@@ -34,7 +28,7 @@ public class BulletHandling : MonoBehaviour {
 			activeTime += Time.deltaTime;
 		}
 	}
-	
+
 	void OnTriggerEnter(Collider other)
 	{
 		if(other.gameObject.layer == LayerMask.NameToLayer("Obstacle"))
@@ -83,6 +77,11 @@ public class BulletHandling : MonoBehaviour {
 	{
 		if(playerColorState != bulletColorState)
 		{
+			if(bulletMeshRend == null)
+			{
+				bulletMeshRend = bulletModel.GetComponent<MeshRenderer>();
+			}
+
 			switch(playerColorState)
 			{
 			case PlayerControls.PlayerColorState.GREEN: bulletMeshRend.material = stateMaterials[0];
@@ -92,5 +91,6 @@ public class BulletHandling : MonoBehaviour {
 			}
 			bulletColorState = playerColorState;
 		}
+
 	}
 }

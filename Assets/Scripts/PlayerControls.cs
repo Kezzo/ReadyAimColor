@@ -6,6 +6,10 @@ public class PlayerControls : MonoBehaviour {
 
 	public GameObject playerModel;
 	public Transform bulletParent;
+
+	public GameObject worldGO;
+	bool playerIsDead;
+
 	public float sensitivity = 0.1f;
 	public List<Transform> shootPositionList = new List<Transform>();
 	public string currentBulletID;
@@ -21,6 +25,8 @@ public class PlayerControls : MonoBehaviour {
 	public PlayerColorState playerColorState = PlayerColorState.GREEN;
 	public Material[] stateMaterials;
 	MeshRenderer playerMeshRend;
+
+	int lives = 4;
 
 	// Use this for initialization
 	void Start () 
@@ -76,19 +82,59 @@ public class PlayerControls : MonoBehaviour {
 		}
 	}
 
+	void OnTriggerEnter(Collider other)
+	{
+		if(other.gameObject.layer == LayerMask.NameToLayer("Obstacle"))
+		{
+			//print (other.name);
+			lives--;
+			print(lives);
+			other.gameObject.SetActive(false);
+
+			if(lives < 1)
+			{
+				worldGO.GetComponent<WorldGeneration>().playerIsDead = true;
+				playerIsDead = true;
+				StartCoroutine(restartLevelAfter(2.0f));
+			}
+		}
+	}
+
+	public IEnumerator restartLevelAfter(float secondsToWait)
+	{
+		yield return new WaitForSeconds(secondsToWait);
+
+		Application.LoadLevel(Application.loadedLevelName);
+	}
+
+	public void ToggleState()
+	{
+		if(playerColorState == PlayerColorState.GREEN)
+		{
+			handlePlayerStateChange(PlayerColorState.YELLOW);
+		}
+		else if(playerColorState == PlayerColorState.YELLOW)
+		{
+			handlePlayerStateChange(PlayerColorState.GREEN);
+		}
+	}
+
 	void handlePlayerStateChange(PlayerColorState newPlayerColorState)
 	{
 		if(playerColorState != newPlayerColorState)
 		{
+			Material[] currentMaterials = playerMeshRend.materials;
 			playerColorState = newPlayerColorState;
 			
 			switch(playerColorState)
 			{
-			case PlayerColorState.GREEN: playerMeshRend.material = stateMaterials[0];
+			case PlayerColorState.GREEN: currentMaterials[1] = stateMaterials[0];
 				break;
-			case PlayerColorState.YELLOW: playerMeshRend.material = stateMaterials[1];
+			case PlayerColorState.YELLOW: currentMaterials[1] = stateMaterials[1];
 				break;
 			}
+
+			playerMeshRend.materials = currentMaterials;
 		}
 	}
 
@@ -113,6 +159,7 @@ public class PlayerControls : MonoBehaviour {
 				Debug.DrawLine(this.transform.position,wallHit.point);
 				if(wallHit.distance > shipWidth)
 				{
+					//print ("moveOnXAxis");
 					moveOnXAxis(gyroScopeX);
 				}
 			}
@@ -122,7 +169,10 @@ public class PlayerControls : MonoBehaviour {
 
 	void moveOnXAxis(float gyroScopeX)
 	{
-		this.transform.Translate((gyroScopeX * sensitivity) * Time.deltaTime, 0.0f, 0.0f);
-		this.transform.position = new Vector3(this.transform.position.x, 0.0f, 0.0f);
+		if(!playerIsDead)
+		{
+			this.transform.Translate((gyroScopeX * sensitivity) * Time.deltaTime, 0.0f, 0.0f);
+			this.transform.position = new Vector3(this.transform.position.x, 1.0f, 0.0f);
+		}
 	}
 }
