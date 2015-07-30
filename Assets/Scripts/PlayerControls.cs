@@ -15,7 +15,7 @@ public class PlayerControls : MonoBehaviour {
 	public string currentBulletID;
 	Dictionary<string,GameObject> bulletsDict = new Dictionary<string,GameObject>();
 
-	public LayerMask layerMaskWALL = new LayerMask();
+	public LayerMask layerMaskWALL;
 	public float shipWidth = 0.0f;
 
 	float timeSinceLastBullet = 0.0f;
@@ -66,18 +66,7 @@ public class PlayerControls : MonoBehaviour {
 					Debug.DrawLine(touchRay.origin,hit.point);
 					Debug.Log(hit.collider.name);*/
 
-				if(timeSinceLastBullet < 0.0f)
-				{
-					foreach(Transform shootPosition in shootPositionList)
-					{
-						//shootPosition.LookAt(hit.point);
 
-						GameObject bullet = Instantiate(bulletsDict[currentBulletID], shootPosition.position, shootPosition.rotation) as GameObject;
-						bullet.transform.parent = bulletParent;
-						bullet.GetComponent<BulletHandling>().setBulletState(playerColorState);
-						timeSinceLastBullet = shootingCD;
-					}
-				}
 			}
 		}
 	}
@@ -119,6 +108,22 @@ public class PlayerControls : MonoBehaviour {
 		}
 	}
 
+	public void shoot()
+	{
+		if(timeSinceLastBullet < 0.0f)
+		{
+			foreach(Transform shootPosition in shootPositionList)
+			{
+				//shootPosition.LookAt(hit.point);
+				
+				GameObject bullet = Instantiate(bulletsDict[currentBulletID], shootPosition.position, shootPosition.rotation) as GameObject;
+				bullet.transform.parent = bulletParent;
+				bullet.GetComponent<BulletHandling>().setBulletState(playerColorState);
+				timeSinceLastBullet = shootingCD;
+			}
+		}
+	}
+	
 	void handlePlayerStateChange(PlayerColorState newPlayerColorState)
 	{
 		if(playerColorState != newPlayerColorState)
@@ -143,9 +148,11 @@ public class PlayerControls : MonoBehaviour {
 		RaycastHit wallHit;
 		if(gyroScopeX > 0.0f)
 		{
-			if(Physics.Raycast(this.transform.position, Vector3.right, out wallHit, layerMaskWALL))
+			if(Physics.Raycast(this.transform.position, Vector3.right, out wallHit, 100.0f,layerMaskWALL))
 			{
 				Debug.DrawLine(this.transform.position,wallHit.point);
+				print (wallHit.collider.name);
+
 				if(wallHit.distance > shipWidth)
 				{
 					moveOnXAxis(gyroScopeX);
@@ -154,12 +161,13 @@ public class PlayerControls : MonoBehaviour {
 		}
 		else if(gyroScopeX < 0.0f)
 		{
-			if(Physics.Raycast(this.transform.position, Vector3.left, out wallHit, layerMaskWALL))
+			if(Physics.Raycast(this.transform.position, Vector3.left, out wallHit, 100.0f, layerMaskWALL))
 			{
 				Debug.DrawLine(this.transform.position,wallHit.point);
+				print (wallHit.collider.name);
+
 				if(wallHit.distance > shipWidth)
 				{
-					//print ("moveOnXAxis");
 					moveOnXAxis(gyroScopeX);
 				}
 			}
