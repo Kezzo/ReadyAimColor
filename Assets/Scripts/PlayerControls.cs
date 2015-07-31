@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 public class PlayerControls : MonoBehaviour {
 
@@ -26,6 +27,7 @@ public class PlayerControls : MonoBehaviour {
 	public Material[] stateMaterials;
 	MeshRenderer playerMeshRend;
 
+	public List<GameObject> liveSprites = new List<GameObject>();
 	int lives = 4;
 
 	// Use this for initialization
@@ -47,28 +49,6 @@ public class PlayerControls : MonoBehaviour {
 		checkWallDistanceOnXAxis(Input.acceleration.x);
 
 		timeSinceLastBullet -= Time.deltaTime;
-
-		if(Input.touchCount > 0)
-		{
-			if(Input.GetTouch(0).phase == TouchPhase.Moved)
-			{
-				//Vector2 touchDeltaPosition = Input.GetTouch(0).deltaPosition;
-
-				//transform.Translate(touchDeltaPosition.x * sensitivity, touchDeltaPosition.y * sensitivity, 0.0f);
-			}
-			else if(Input.GetTouch(0).phase == TouchPhase.Began)
-			{
-				/*Ray touchRay = Camera.main.ScreenPointToRay(Input.GetTouch(0).position);
-
-				RaycastHit hit;
-				if(Physics.Raycast(touchRay, out hit, 100.0f, layerMask))
-				{
-					Debug.DrawLine(touchRay.origin,hit.point);
-					Debug.Log(hit.collider.name);*/
-
-
-			}
-		}
 	}
 
 	void OnTriggerEnter(Collider other)
@@ -77,6 +57,7 @@ public class PlayerControls : MonoBehaviour {
 		{
 			//print (other.name);
 			lives--;
+			liveSprites.ElementAt(lives).SetActive(false);
 			print(lives);
 			other.gameObject.SetActive(false);
 
@@ -151,7 +132,7 @@ public class PlayerControls : MonoBehaviour {
 			if(Physics.Raycast(this.transform.position, Vector3.right, out wallHit, 100.0f,layerMaskWALL))
 			{
 				Debug.DrawLine(this.transform.position,wallHit.point);
-				print (wallHit.collider.name);
+				//print (wallHit.collider.name);
 
 				if(wallHit.distance > shipWidth)
 				{
@@ -164,7 +145,7 @@ public class PlayerControls : MonoBehaviour {
 			if(Physics.Raycast(this.transform.position, Vector3.left, out wallHit, 100.0f, layerMaskWALL))
 			{
 				Debug.DrawLine(this.transform.position,wallHit.point);
-				print (wallHit.collider.name);
+//				print (wallHit.collider.name);
 
 				if(wallHit.distance > shipWidth)
 				{
