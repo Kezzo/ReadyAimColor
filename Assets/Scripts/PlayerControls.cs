@@ -27,7 +27,7 @@ public class PlayerControls : MonoBehaviour {
 	public Material[] stateMaterials;
 	MeshRenderer playerMeshRend;
 
-	public List<GameObject> liveSprites = new List<GameObject>();
+	public GameplayUI gameplayUI;
 	int lives = 4;
 
 	// Use this for initialization
@@ -57,8 +57,8 @@ public class PlayerControls : MonoBehaviour {
 		{
 			//print (other.name);
 			lives--;
-			liveSprites.ElementAt(lives).SetActive(false);
-			print(lives);
+			gameplayUI.updateLiveUI(lives);
+			//print(lives);
 			other.gameObject.SetActive(false);
 
 			if(lives < 1)
@@ -115,9 +115,11 @@ public class PlayerControls : MonoBehaviour {
 			switch(playerColorState)
 			{
 			case PlayerColorState.GREEN: currentMaterials[1] = stateMaterials[0];
-				break;
+					gameplayUI.toggleColorSwitchUI(stateMaterials[1]);
+					break;
 			case PlayerColorState.YELLOW: currentMaterials[1] = stateMaterials[1];
-				break;
+					gameplayUI.toggleColorSwitchUI(stateMaterials[0]);
+					break;
 			}
 
 			playerMeshRend.materials = currentMaterials;

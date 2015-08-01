@@ -15,6 +15,8 @@ public class WorldGeneration : MonoBehaviour {
 	public float mapPartLength;
 	public int mapPartCount;
 
+	public bool generateObstacles;
+
 	GameObject lastMapPart;
 
 	// Use this for initialization
@@ -77,7 +79,11 @@ public class WorldGeneration : MonoBehaviour {
 
 		if(mapParts.Count > 1)
 		{
-			currentMapPart.obstacleGenScript.generateObstacles(0);
+			if(generateObstacles)
+			{
+				currentMapPart.obstacleGenScript.generateObstacles(0);
+			}
+
 			//print ("generatedObstacles");
 
 			// To eliminated small displacements of mapParts
