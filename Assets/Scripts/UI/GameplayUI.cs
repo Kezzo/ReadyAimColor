@@ -27,7 +27,10 @@ public class GameplayUI : MonoBehaviour {
 
 	public void updateLiveUI(int currentlives)
 	{
-		liveSprites.ElementAt(currentlives).SetActive(false);
+		if (liveSprites.ElementAt (currentlives) != null) {
+			liveSprites.ElementAt(currentlives).SetActive(false);
+		}
+
 	}
 
 	public void toggleColorSwitchUI(Material activeMaterial)

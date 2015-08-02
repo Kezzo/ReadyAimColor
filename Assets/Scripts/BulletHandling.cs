@@ -31,24 +31,19 @@ public class BulletHandling : MonoBehaviour {
 
 	void OnTriggerEnter(Collider other)
 	{
-		if(other.gameObject.layer == LayerMask.NameToLayer("Obstacle"))
+		print(other.name);
+
+		switch(other.gameObject.GetComponent<ObstacleState>().getObstacleState())
 		{
-			//print(other.name);
-
-			//ObstacleState.ColorState obstacleColorState = 
-
-			switch(other.gameObject.GetComponent<ObstacleState>().getObstacleState())
-			{
-				case ObstacleState.ColorState.RED: redHit();
-						break;
-				case ObstacleState.ColorState.GREEN: greenHit(other.gameObject);
-						break;
-				case ObstacleState.ColorState.YELLOW: yellowHit(other.gameObject);
-						break;
-			}
-
-			this.gameObject.SetActive(false);
+			case ObstacleState.ColorState.RED: redHit();
+					break;
+			case ObstacleState.ColorState.GREEN: greenHit(other.gameObject);
+					break;
+			case ObstacleState.ColorState.YELLOW: yellowHit(other.gameObject);
+					break;
 		}
+
+		this.gameObject.SetActive(false);
 	}
 
 	void redHit()

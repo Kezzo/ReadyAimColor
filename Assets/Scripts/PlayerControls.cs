@@ -53,20 +53,17 @@ public class PlayerControls : MonoBehaviour {
 
 	void OnTriggerEnter(Collider other)
 	{
-		if(other.gameObject.layer == LayerMask.NameToLayer("Obstacle"))
-		{
-			//print (other.name);
-			lives--;
-			gameplayUI.updateLiveUI(lives);
-			//print(lives);
-			other.gameObject.SetActive(false);
+//		print (other.name);
+		lives--;
+		gameplayUI.updateLiveUI(lives);
+		//print(lives);
+		other.gameObject.SetActive(false);
 
-			if(lives < 1)
-			{
-				worldGO.GetComponent<WorldGeneration>().playerIsDead = true;
-				playerIsDead = true;
-				StartCoroutine(restartLevelAfter(2.0f));
-			}
+		if(lives < 1)
+		{
+			worldGO.GetComponent<WorldGeneration>().playerIsDead = true;
+			playerIsDead = true;
+			StartCoroutine(restartLevelAfter(2.0f));
 		}
 	}
 
@@ -144,7 +141,7 @@ public class PlayerControls : MonoBehaviour {
 		}
 		else if(gyroScopeX < 0.0f)
 		{
-			if(Physics.Raycast(this.transform.position, Vector3.left, out wallHit, 100.0f, layerMaskWALL))
+			if(Physics.Raycast(this.transform.position, Vector3.left, out wallHit, 20.0f, layerMaskWALL))
 			{
 				Debug.DrawLine(this.transform.position,wallHit.point);
 //				print (wallHit.collider.name);
