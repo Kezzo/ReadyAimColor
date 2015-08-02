@@ -94,9 +94,13 @@ public class PlayerControls : MonoBehaviour {
 			{
 				//shootPosition.LookAt(hit.point);
 				
-				GameObject bullet = Instantiate(bulletsDict[currentBulletID], shootPosition.position, shootPosition.rotation) as GameObject;
+				GameObject bullet = SimplePool.Spawn(bulletsDict[currentBulletID], shootPosition.position, shootPosition.rotation);
 				bullet.transform.parent = bulletParent;
-				bullet.GetComponent<BulletHandling>().setBulletState(playerColorState);
+
+				BulletHandling bulletHandlingScript = bullet.GetComponent<BulletHandling>();
+				bulletHandlingScript.resetBulletLiveTime();
+				bulletHandlingScript.setBulletState(playerColorState);
+
 				timeSinceLastBullet = shootingCD;
 			}
 		}

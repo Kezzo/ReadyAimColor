@@ -21,7 +21,7 @@ public class BulletHandling : MonoBehaviour {
 
 		if(activeTime > 2.0f)
 		{
-			Destroy(this.gameObject);
+			SimplePool.Despawn(this.gameObject);
 		}
 		else
 		{
@@ -86,6 +86,12 @@ public class BulletHandling : MonoBehaviour {
 			}
 			bulletColorState = playerColorState;
 		}
+	}
 
+	// Needed for pooling the Bullets, because the Pool won't reset the time of the bullets 
+	//and Start() is called only the first time the bullet is instantiated
+	public void resetBulletLiveTime()
+	{
+		activeTime = 0.0f;
 	}
 }
