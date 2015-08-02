@@ -5,7 +5,7 @@ using System.Linq;
 
 public class WorldGeneration : MonoBehaviour {
 
-	public bool playerIsDead;
+	public bool gameIsPaused;
 	public float speed = 1.0f;
 	List<MapPart> mapParts = new List<MapPart>();
 	public GameObject mapPartsParent;
@@ -42,10 +42,15 @@ public class WorldGeneration : MonoBehaviour {
 			//mapPart.transform.Translate(0.0f, 0.0f, -(1.0f * speed * Time.deltaTime));
 		}
 
-		if(!playerIsDead)
+		if(!gameIsPaused)
 		{
 			mapPartsParent.transform.Translate(0.0f, 0.0f, -(1.0f * speed * Time.deltaTime));
 		}
+	}
+
+	public void toggleWorldGeneration(bool newPauseStatus)
+	{
+		gameIsPaused = newPauseStatus;
 	}
 
 	MapPart CreateMapPart(Vector3 spawnPosition)

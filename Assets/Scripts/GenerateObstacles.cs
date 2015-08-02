@@ -56,7 +56,7 @@ public class GenerateObstacles : MonoBehaviour {
 			}
 		}
 
-		print (generatedReds);
+//		print (generatedReds);
 
 		if (generatedReds > 5) {
 			print ("new id generation cause of 6 reds");

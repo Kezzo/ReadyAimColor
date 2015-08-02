@@ -8,8 +8,8 @@ public class PlayerControls : MonoBehaviour {
 	public GameObject playerModel;
 	public Transform bulletParent;
 
-	public GameObject worldGO;
-	bool playerIsDead;
+	public WorldGeneration worldGenScript;
+	bool gameIsPaused;
 
 	public float sensitivity = 0.1f;
 	public List<Transform> shootPositionList = new List<Transform>();
@@ -46,9 +46,10 @@ public class PlayerControls : MonoBehaviour {
 	// Update is called once per frame
 	void Update () 
 	{
-		checkWallDistanceOnXAxis(Input.acceleration.x);
-
-		timeSinceLastBullet -= Time.deltaTime;
+		if (!gameIsPaused) {
+			checkWallDistanceOnXAxis(Input.acceleration.x);
+			timeSinceLastBullet -= Time.deltaTime;
+		}
 	}
 
 	void OnTriggerEnter(Collider other)
@@ -61,17 +62,15 @@ public class PlayerControls : MonoBehaviour {
 
 		if(lives < 1)
 		{
-			worldGO.GetComponent<WorldGeneration>().playerIsDead = true;
-			playerIsDead = true;
-			StartCoroutine(restartLevelAfter(2.0f));
+			pauseGame(true);
+			gameplayUI.showGameOverMenu();
 		}
 	}
 
-	public IEnumerator restartLevelAfter(float secondsToWait)
+	public void pauseGame(bool pauseIt)
 	{
-		yield return new WaitForSeconds(secondsToWait);
-
-		Application.LoadLevel(Application.loadedLevelName);
+		gameIsPaused = pauseIt;
+		worldGenScript.toggleWorldGeneration (gameIsPaused);
 	}
 
 	public void ToggleState()
@@ -88,7 +87,7 @@ public class PlayerControls : MonoBehaviour {
 
 	public void shoot()
 	{
-		if(timeSinceLastBullet < 0.0f)
+		if(timeSinceLastBullet < 0.0f && !gameIsPaused)
 		{
 			foreach(Transform shootPosition in shootPositionList)
 			{
@@ -161,7 +160,7 @@ public class PlayerControls : MonoBehaviour {
 
 	void moveOnXAxis(float gyroScopeX)
 	{
-		if(!playerIsDead)
+		if(!gameIsPaused)
 		{
 			this.transform.Translate((gyroScopeX * sensitivity) * Time.deltaTime, 0.0f, 0.0f);
 			this.transform.position = new Vector3(this.transform.position.x, 1.0f, 0.0f);
