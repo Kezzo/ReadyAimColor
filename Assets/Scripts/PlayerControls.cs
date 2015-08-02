@@ -51,9 +51,9 @@ public class PlayerControls : MonoBehaviour {
 		timeSinceLastBullet -= Time.deltaTime;
 	}
 
-	void OnTriggerEnter(Collider other)
+	void OnTriggerEnter2D(Collider2D other)
 	{
-//		print (other.name);
+		print (other.name);
 		lives--;
 		gameplayUI.updateLiveUI(lives);
 		//print(lives);
@@ -152,7 +152,7 @@ public class PlayerControls : MonoBehaviour {
 				}
 			}
 		}
-		playerModel.transform.localEulerAngles = new Vector3(0.0f, 0.0f, -(gyroScopeX * 20.0f));
+		playerModel.transform.localEulerAngles = new Vector3(270.0f, 0.0f, -(gyroScopeX * 20.0f));
 	}
 
 	void moveOnXAxis(float gyroScopeX)
@@ -160,7 +160,7 @@ public class PlayerControls : MonoBehaviour {
 		if(!playerIsDead)
 		{
 			this.transform.Translate((gyroScopeX * sensitivity) * Time.deltaTime, 0.0f, 0.0f);
-			this.transform.position = new Vector3(this.transform.position.x, 1.0f, 0.0f);
+			this.transform.position = new Vector3(this.transform.position.x, 0.0f, -1.0f);
 		}
 	}
 }

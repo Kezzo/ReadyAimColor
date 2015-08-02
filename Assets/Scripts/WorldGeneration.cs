@@ -26,7 +26,7 @@ public class WorldGeneration : MonoBehaviour {
 
 		for(int i=0; i<mapPartCount; i++)
 		{
-			SpawnMapPart(new Vector3(0.0f, 0.0f, i * mapPartLength), null);
+			SpawnMapPart(new Vector3(0.0f, i * mapPartLength, 0.0f), null);
 		}
 	}
 	
@@ -35,7 +35,7 @@ public class WorldGeneration : MonoBehaviour {
 	{
 		foreach(MapPart mapPart in mapParts.ToArray())
 		{
-			if(mapPart.mapPartGO.transform.position.z < -mapPartLength)
+			if(mapPart.mapPartGO.transform.position.y < -mapPartLength)
 			{
 				SpawnMapPart(mapPartSpawnPosition, mapPart);
 			}
@@ -44,13 +44,13 @@ public class WorldGeneration : MonoBehaviour {
 
 		if(!playerIsDead)
 		{
-			mapPartsParent.transform.Translate(0.0f, 0.0f, -(1.0f * speed * Time.deltaTime));
+			mapPartsParent.transform.Translate(0.0f, -(1.0f * speed * Time.deltaTime), 0.0f);
 		}
 	}
 
 	MapPart CreateMapPart(Vector3 spawnPosition)
 	{
-		GameObject createdMapPartGO = Instantiate(currentMapPrefab, spawnPosition, Quaternion.identity) as GameObject;
+		GameObject createdMapPartGO = Instantiate(currentMapPrefab, spawnPosition, currentMapPrefab.transform.rotation) as GameObject;
 		createdMapPartGO.transform.parent = mapPartsParent.transform;
 
 		MapPart createdMapPart = new MapPart(createdMapPartGO, createdMapPartGO.GetComponent<GenerateObstacles>());
@@ -77,6 +77,8 @@ public class WorldGeneration : MonoBehaviour {
 			currentMapPartGO.transform.position = spawnPosition;
 		}
 
+		//print (mapParts.Count);
+
 		if(mapParts.Count > 1)
 		{
 			if(generateObstacles)
@@ -87,11 +89,11 @@ public class WorldGeneration : MonoBehaviour {
 			//print ("generatedObstacles");
 
 			// To eliminated small displacements of mapParts
-			float lastMapPartPosZ = lastMapPart.transform.position.z;
-			if((currentMapPartGO.transform.position.z - lastMapPartPosZ) > mapPartLength)
+			float lastMapPartPosY = lastMapPart.transform.position.y;
+			if((currentMapPartGO.transform.position.z - lastMapPartPosY) > mapPartLength)
 			{
-				float correctedZPosition = currentMapPartGO.transform.position.z - ((currentMapPartGO.transform.position.z - lastMapPartPosZ) - mapPartLength);
-				currentMapPartGO.transform.position = new Vector3(0.0f,0.0f, correctedZPosition);
+				float correctedZPosition = currentMapPartGO.transform.position.z - ((currentMapPartGO.transform.position.z - lastMapPartPosY) - mapPartLength);
+				currentMapPartGO.transform.position = new Vector3(0.0f,correctedZPosition, 0.0f);
 			}
 		}
 

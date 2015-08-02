@@ -16,8 +16,11 @@ public class BulletHandling : MonoBehaviour {
 	// Update is called once per frame
 	void Update () 
 	{
-		this.transform.Translate((Vector3.forward * speed) * Time.deltaTime);
-		this.transform.localEulerAngles = new Vector3(0.0f, 0.0f, (this.transform.localEulerAngles.z - (120.0f * Time.deltaTime)));
+		this.transform.Translate((Vector3.up * speed) * Time.deltaTime);
+
+		this.transform.RotateAround (this.transform.position, Vector3.up, -(100.0f*Time.deltaTime));
+		//this.transform.localEulerAngles = new Vector3(-90.0f, (this.transform.localEulerAngles.z + (20.0f * Time.deltaTime)), 0.0f);
+		//this.transform.Rotate (00.0f, 20.0f * Time.deltaTime, 0.0f);
 
 		if(activeTime > 2.0f)
 		{
@@ -29,9 +32,9 @@ public class BulletHandling : MonoBehaviour {
 		}
 	}
 
-	void OnTriggerEnter(Collider other)
+	void OnTriggerEnter2D(Collider2D other)
 	{
-		print(other.name);
+//		print(other.name);
 
 		switch(other.gameObject.GetComponent<ObstacleState>().getObstacleState())
 		{

@@ -45,12 +45,24 @@ public class GenerateObstacles : MonoBehaviour {
 	{
 		int[] generatedIDs = new int[6];
 
+		int reds = 0;
+
 		for(int i=0; i<generatedIDs.Length; i++)
 		{
 			generatedIDs[i] = Random.Range(0,4);
+			if(generatedIDs[i] == 0)
+			{
+				reds++;
+			}
 //			print (generatedIDs[i]);
 		}
 
+//		print (reds);
+		if (reds > 5) 
+		{
+			print ("new generation");
+			generateLevel1Diff();
+		}
 
 		return generatedIDs;
 	}

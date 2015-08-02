@@ -9,14 +9,14 @@ public class GameplayUI : MonoBehaviour {
 
 	public List<GameObject> shiftArrows = new List<GameObject>();
 	MeshRenderer[] meshRendArrows = new MeshRenderer[2];
-	GameObject shiftArrowParent;
+//	GameObject shiftArrowParent;
 	int activeArrowIndex = 1;
 	public Material deactiveMaterial;
 
 	// Use this for initialization
 	void Start () 
 	{
-		shiftArrowParent = shiftArrows [0].transform.parent.gameObject;
+		//shiftArrowParent = shiftArrows [0].transform.parent.gameObject;
 		//print (shiftArrowParent.name);
 
 		for(int i=0; i<shiftArrows.Count; i++)
