@@ -5,29 +5,32 @@ using System.Linq;
 
 public class GameplayUI : MonoBehaviour {
 
-	public List<GameObject> liveSprites = new List<GameObject>();
+	[SerializeField]
+	private List<GameObject> liveSprites = new List<GameObject>();
 
-	public List<GameObject> shiftArrows = new List<GameObject>();
-	MeshRenderer[] meshRendArrows = new MeshRenderer[2];
-//	GameObject shiftArrowParent;
-	int activeArrowIndex = 1;
-	public Material deactiveMaterial;
+	[SerializeField]
+	private GameObject shiftArrow;
+	private MeshRenderer meshRendArrow;
 
-	public PlayerControls playerControls;
-	public GameObject pauseMenu;
-	public GameObject pauseButton;
-	public GameObject gameOverMenu;
+	[SerializeField]
+	private Material deactiveMaterial;
+
+	[SerializeField]
+	private PlayerControls playerControls;
+
+	[SerializeField]
+	private GameObject pauseMenu;
+
+	[SerializeField]
+	private GameObject pauseButton;
+
+	[SerializeField]
+	private GameObject gameOverMenu;
 
 	// Use this for initialization
 	void Start () 
 	{
-	//	shiftArrowParent = shiftArrows [0].transform.parent.gameObject;
-		//print (shiftArrowParent.name);
-
-		for(int i=0; i<shiftArrows.Count; i++)
-		{
-			meshRendArrows[i] = shiftArrows.ElementAt(i).GetComponent<MeshRenderer>();
-		}
+		meshRendArrow = shiftArrow.GetComponent<MeshRenderer>();
 	}
 
 	public void updateLiveUI(int currentlives)
@@ -39,10 +42,7 @@ public class GameplayUI : MonoBehaviour {
 
 	public void toggleColorSwitchUI(Material activeMaterial)
 	{
-		//print (activeArrowIndex);
-		meshRendArrows [activeArrowIndex].material = activeMaterial;
-		activeArrowIndex = activeArrowIndex == 0 ? 1 : 0;
-		meshRendArrows [activeArrowIndex].material = deactiveMaterial;
+		meshRendArrow.material = activeMaterial;
 	}
 
 	void OnApplicationPause(bool isPaused)

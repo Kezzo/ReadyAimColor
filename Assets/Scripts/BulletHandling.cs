@@ -3,13 +3,17 @@ using System.Collections;
 
 public class BulletHandling : MonoBehaviour {
 
+	[SerializeField]
+	private Material[] stateMaterials;
+
+	[SerializeField]
+	private GameObject bulletModel;
+
+	[SerializeField]
+	private MeshRenderer bulletMeshRend;
+
 	float speed = 20.0f;
-
 	float activeTime;
-
-	public Material[] stateMaterials;
-	public GameObject bulletModel;
-	public MeshRenderer bulletMeshRend;
 
 	PlayerControls.PlayerColorState bulletColorState = PlayerControls.PlayerColorState.GREEN;
 

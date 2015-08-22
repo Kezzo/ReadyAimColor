@@ -5,10 +5,12 @@ using System.Linq;
 
 public class GenerateObstacles : MonoBehaviour {
 
-	public GameObject obstacleFirstRowParent;
+	[SerializeField]
+	private GameObject obstacleFirstRowParent;
 	List<Obstacle> obstaclesFirstRow = new List<Obstacle>();
 
-	public GameObject obstacleSecondRowParent;
+	[SerializeField]
+	private GameObject obstacleSecondRowParent;
 	List<Obstacle> obstaclesSecondRow = new List<Obstacle>();
 
 	public void generateObstacles(int difficultyLevel)

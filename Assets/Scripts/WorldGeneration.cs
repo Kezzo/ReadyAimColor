@@ -5,17 +5,28 @@ using System.Linq;
 
 public class WorldGeneration : MonoBehaviour {
 
-	public bool gameIsPaused;
-	public float speed = 1.0f;
+	[SerializeField]
+	private bool gameIsPaused;
+
+	[SerializeField]
+	private float speed = 1.0f;
 	List<MapPart> mapParts = new List<MapPart>();
-	public GameObject mapPartsParent;
+
+	[SerializeField]
+	private GameObject mapPartsParent;
 	Vector3 mapPartSpawnPosition;
 
-	public GameObject currentMapPrefab;
-	public float mapPartLength;
-	public int mapPartCount;
+	[SerializeField]
+	private GameObject currentMapPrefab;
 
-	public bool generateObstacles;
+	[SerializeField]
+	private float mapPartLength;
+
+	[SerializeField]
+	private int mapPartCount;
+
+	[SerializeField]
+	private bool generateObstacles;
 
 	GameObject lastMapPart;
 

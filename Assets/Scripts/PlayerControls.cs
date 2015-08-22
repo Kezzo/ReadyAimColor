@@ -5,28 +5,47 @@ using System.Linq;
 
 public class PlayerControls : MonoBehaviour {
 
-	public GameObject playerModel;
-	public Transform bulletParent;
+	[SerializeField]
+	private GameObject playerModel;
 
-	public WorldGeneration worldGenScript;
+	[SerializeField]
+	private Transform bulletParent;
+
+	[SerializeField]
+	private WorldGeneration worldGenScript;
 	bool gameIsPaused;
 
-	public float sensitivity = 0.1f;
-	public List<Transform> shootPositionList = new List<Transform>();
-	public string currentBulletID;
+	[SerializeField]
+	private float sensitivity = 0.1f;
+
+	[SerializeField]
+	private List<Transform> shootPositionList = new List<Transform>();
+
+	[SerializeField]
+	private string currentBulletID;
 	Dictionary<string,GameObject> bulletsDict = new Dictionary<string,GameObject>();
 
-	public LayerMask layerMaskWALL;
-	public float shipWidth = 0.0f;
+	[SerializeField]
+	private LayerMask layerMaskWALL;
 
+	[SerializeField]
+	private float shipWidth = 0.0f;
+
+	[SerializeField]
+	private float shootingCD = 0.0f;
 	float timeSinceLastBullet = 0.0f;
-	public float shootingCD = 0.0f;
+
 
 	public enum PlayerColorState{GREEN, YELLOW};
+
+	[SerializeField]
 	public PlayerColorState playerColorState = PlayerColorState.GREEN;
+
+	[SerializeField]
 	public Material[] stateMaterials;
 	MeshRenderer playerMeshRend;
 
+	[SerializeField]
 	public GameplayUI gameplayUI;
 	int lives = 4;
 
@@ -114,12 +133,12 @@ public class PlayerControls : MonoBehaviour {
 			
 			switch(playerColorState)
 			{
-			case PlayerColorState.GREEN: currentMaterials[1] = stateMaterials[0];
-					gameplayUI.toggleColorSwitchUI(stateMaterials[1]);
-					break;
-			case PlayerColorState.YELLOW: currentMaterials[1] = stateMaterials[1];
-					gameplayUI.toggleColorSwitchUI(stateMaterials[0]);
-					break;
+				case PlayerColorState.GREEN: currentMaterials[1] = stateMaterials[0];
+						gameplayUI.toggleColorSwitchUI(stateMaterials[0]);
+						break;
+				case PlayerColorState.YELLOW: currentMaterials[1] = stateMaterials[1];
+						gameplayUI.toggleColorSwitchUI(stateMaterials[1]);
+						break;
 			}
 
 			playerMeshRend.materials = currentMaterials;
@@ -162,8 +181,13 @@ public class PlayerControls : MonoBehaviour {
 	{
 		if(!gameIsPaused)
 		{
-			this.transform.Translate((gyroScopeX * sensitivity) * Time.deltaTime, 0.0f, 0.0f);
-			this.transform.position = new Vector3(this.transform.position.x, 1.0f, 0.0f);
+			//print("gyroScopeX: "+Mathf.Abs(gyroScopeX));
+			if(Mathf.Abs(gyroScopeX) > 0.02f)
+			{
+				this.transform.Translate((gyroScopeX * sensitivity) * Time.deltaTime, 0.0f, 0.0f);
+				this.transform.position = new Vector3(this.transform.position.x, 1.0f, 0.0f);
+			}
+
 		}
 	}
 }
