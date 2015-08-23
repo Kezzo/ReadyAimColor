@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 
 public class BulletHandling : MonoBehaviour {
 
@@ -12,13 +11,17 @@ public class BulletHandling : MonoBehaviour {
 	[SerializeField]
 	private MeshRenderer m_bulletMeshRend;
 
-    [SerializeField]
-    private HighScoreController m_highScoreController;
-
 	private float m_speed = 20.0f;
 	private float m_activeTime;
 
-	ColorState m_bulletColorState = ColorState.GREEN;
+    private ColorState m_bulletColorState = ColorState.GREEN;
+
+    private HighScoreController m_highScoreController;
+
+    void Start()
+    {
+        m_highScoreController = HighScoreController.Instance;
+    }
 
 	// Update is called once per frame
 	void Update () 
@@ -63,7 +66,7 @@ public class BulletHandling : MonoBehaviour {
 		if(m_bulletColorState == ColorState.GREEN)
 		{
 			obstacle.SetActive(false);
-            //m_highScoreController.UpdateHighScoreBy(100);
+            m_highScoreController.UpdateHighScoreBy(100);
         }
 
 	}
@@ -73,7 +76,7 @@ public class BulletHandling : MonoBehaviour {
 		if(m_bulletColorState == ColorState.YELLOW)
 		{
 			obstacle.SetActive(false);
-            //m_highScoreController.UpdateHighScoreBy(100);
+            m_highScoreController.UpdateHighScoreBy(100);
         }
 	}
 

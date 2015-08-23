@@ -2,47 +2,54 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine.UI;
 
 public class GameplayUI : MonoBehaviour {
 
 	[SerializeField]
-	private List<GameObject> liveSprites = new List<GameObject>();
+	private List<GameObject> m_liveSprites = new List<GameObject>();
 
 	[SerializeField]
-	private GameObject shiftArrow;
-	private MeshRenderer meshRendArrow;
+	private GameObject m_shiftArrow;
+	private MeshRenderer m_meshRendArrow;
 
 	[SerializeField]
-	private Material deactiveMaterial;
+	private Material m_deactiveMaterial;
 
 	[SerializeField]
-	private PlayerControls playerControls;
+	private PlayerControls m_playerControls;
 
 	[SerializeField]
-	private GameObject pauseMenu;
+	private GameObject m_pauseMenu;
 
 	[SerializeField]
-	private GameObject pauseButton;
+	private GameObject m_pauseButton;
 
 	[SerializeField]
-	private GameObject gameOverMenu;
+	private GameObject m_gameOverMenu;
+
+    [SerializeField]
+    private Text m_gameOverHighScoreText;
+
+    private HighScoreController m_highScoreController;
 
 	// Use this for initialization
 	void Start () 
 	{
-		meshRendArrow = shiftArrow.GetComponent<MeshRenderer>();
-	}
+		m_meshRendArrow = m_shiftArrow.GetComponent<MeshRenderer>();
+        m_highScoreController = HighScoreController.Instance;
+    }
 
 	public void updateLiveUI(int currentlives)
 	{
-		if (liveSprites.ElementAt (currentlives) != null) {
-			liveSprites.ElementAt(currentlives).SetActive(false);
+		if (m_liveSprites.ElementAt (currentlives) != null) {
+			m_liveSprites.ElementAt(currentlives).SetActive(false);
 		}
 	}
 
 	public void toggleColorSwitchUI(Material activeMaterial)
 	{
-		meshRendArrow.material = activeMaterial;
+		m_meshRendArrow.material = activeMaterial;
 	}
 
 	void OnApplicationPause(bool isPaused)
@@ -55,8 +62,19 @@ public class GameplayUI : MonoBehaviour {
 
 	public void showGameOverMenu()
 	{
-		gameOverMenu.SetActive (true);
-	}
+        int currentHighScore = m_highScoreController.GetCurrentHighScore();
+        PlayerPrefs.SetInt("LastHighScore", currentHighScore);
+
+        int bestHighScore = PlayerPrefs.GetInt("BestHighScore");
+        if(bestHighScore < currentHighScore)
+        {
+            PlayerPrefs.SetInt("BestHighScore", currentHighScore);
+        }
+
+        m_gameOverHighScoreText.text = currentHighScore.ToString();
+
+        m_gameOverMenu.SetActive(true);
+    }
 
 	public void startNewGame()
 	{
@@ -70,15 +88,15 @@ public class GameplayUI : MonoBehaviour {
 
 	public void PauseGame()
 	{
-		playerControls.pauseGame (true);
-		pauseMenu.SetActive (true);
-		pauseButton.SetActive (false);
+		m_playerControls.pauseGame (true);
+		m_pauseMenu.SetActive (true);
+		m_pauseButton.SetActive (false);
 	}
 
 	public void UnPauseGame()
 	{
-		playerControls.pauseGame (false);
-		pauseMenu.SetActive (false);
-		pauseButton.SetActive (true);
+		m_playerControls.pauseGame (false);
+		m_pauseMenu.SetActive (false);
+		m_pauseButton.SetActive (true);
 	}
 }

@@ -27,14 +27,18 @@ public class WorldGeneration : MonoBehaviour {
 	private bool m_generateObstacles;
 
     [SerializeField]
-    private HighScoreController m_highScoreController;
+    private bool m_updateHighScore;
 
-	GameObject m_lastMapPart;
+    private GameObject m_lastMapPart;
+
+    private HighScoreController m_highScoreController;
 
 	// Use this for initialization
 	void Start () 
 	{
-		m_mapPartSpawnPosition = new Vector3(0.0f, 0.0f, (m_mapPartCount-1) * m_mapPartLength);
+        m_highScoreController = HighScoreController.Instance;
+
+        m_mapPartSpawnPosition = new Vector3(0.0f, 0.0f, (m_mapPartCount-1) * m_mapPartLength);
 
 		for(int i=0; i<m_mapPartCount; i++)
 		{
@@ -50,7 +54,11 @@ public class WorldGeneration : MonoBehaviour {
 			if(mapPart.MapPartGO.transform.position.z < -m_mapPartLength)
 			{
 				SpawnMapPart(m_mapPartSpawnPosition, mapPart);
-                m_highScoreController.UpdateHighScoreBy(300);
+                if(m_updateHighScore)
+                {
+                    m_highScoreController.UpdateHighScoreBy(300);
+                }
+                
             }
 			//mapPart.transform.Translate(0.0f, 0.0f, -(1.0f * speed * Time.deltaTime));
 		}
