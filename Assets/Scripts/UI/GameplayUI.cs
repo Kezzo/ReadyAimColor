@@ -33,11 +33,26 @@ public class GameplayUI : MonoBehaviour {
 
     private HighScoreController m_highScoreController;
 
+    private float m_startButtonCD = 0.0f;
+    private bool m_decreaseStartCD;
+
 	// Use this for initialization
 	void Start () 
 	{
 		m_meshRendArrow = m_shiftArrow.GetComponent<MeshRenderer>();
         m_highScoreController = HighScoreController.Instance;
+    }
+
+    void Update()
+    {
+        if(m_decreaseStartCD)
+        {
+            m_startButtonCD -= Time.deltaTime;
+            if(m_startButtonCD < 0)
+            {
+                m_decreaseStartCD = false;
+            }
+        }
     }
 
 	public void updateLiveUI(int currentlives)
@@ -62,6 +77,9 @@ public class GameplayUI : MonoBehaviour {
 
 	public void showGameOverMenu()
 	{
+        m_startButtonCD = 1.0f;
+        m_decreaseStartCD = true;
+        
         int currentHighScore = m_highScoreController.GetCurrentHighScore();
         PlayerPrefs.SetInt("LastHighScore", currentHighScore);
 
@@ -78,7 +96,10 @@ public class GameplayUI : MonoBehaviour {
 
 	public void startNewGame()
 	{
-		Application.LoadLevel ("Gameplay1");
+        if(m_startButtonCD < 0.0f)
+        {
+            Application.LoadLevel("Gameplay1");
+        }
 	}
 
 	public void backToMenu()
