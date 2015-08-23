@@ -1,40 +1,42 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 
 public class GenerateObstacles : MonoBehaviour {
 
 	[SerializeField]
-	private GameObject obstacleFirstRowParent;
-	List<Obstacle> obstaclesFirstRow = new List<Obstacle>();
+	private GameObject m_obstacleFirstRowParent;
+	private List<Obstacle> m_obstaclesFirstRow = new List<Obstacle>();
 
 	[SerializeField]
-	private GameObject obstacleSecondRowParent;
-	List<Obstacle> obstaclesSecondRow = new List<Obstacle>();
+	private GameObject m_obstacleSecondRowParent;
+    private List<Obstacle> m_obstaclesSecondRow = new List<Obstacle>();
 
+    /// <summary>
+    /// Generates obstacle in a certain amount and colorstate.
+    /// </summary>
+    /// <param name="difficultyLevel"></param>
 	public void generateObstacles(int difficultyLevel)
 	{
-		if(obstaclesFirstRow.Count < 1  || obstaclesSecondRow.Count < 1)
+		if(m_obstaclesFirstRow.Count < 1  || m_obstaclesSecondRow.Count < 1)
 		{
 			getObstacles();
 		}
 
-		disableAllObstacles(obstaclesFirstRow);
+		disableAllObstacles(m_obstaclesFirstRow);
 		int[] generatedIDs = new int[6];
 		generatedIDs = generateLevel1Diff();
 
-		for(int i=0; i<obstaclesFirstRow.Count; i++)
+		for(int i=0; i<m_obstaclesFirstRow.Count; i++)
 		{
-			obstaclesFirstRow[i].obstacleStateScript.setStateAndActive(generatedIDs[i]);
+			m_obstaclesFirstRow[i].obstacleStateScript.setStateAndActive(generatedIDs[i]);
 		}
 
-		disableAllObstacles(obstaclesSecondRow);
+		disableAllObstacles(m_obstaclesSecondRow);
 		generatedIDs = generateLevel1Diff();
 
-		for(int i=0; i<obstaclesFirstRow.Count; i++)
+		for(int i=0; i<m_obstaclesFirstRow.Count; i++)
 		{
-			obstaclesSecondRow[i].obstacleStateScript.setStateAndActive(generatedIDs[i]);
+			m_obstaclesSecondRow[i].obstacleStateScript.setStateAndActive(generatedIDs[i]);
 		}
 	}
 
@@ -71,15 +73,15 @@ public class GenerateObstacles : MonoBehaviour {
 	void getObstacles()
 	{
 		//print ("getObstacles");
-		foreach(Transform child in obstacleFirstRowParent.transform)
+		foreach(Transform child in m_obstacleFirstRowParent.transform)
 		{
-			obstaclesFirstRow.Add(new Obstacle(child.gameObject, child.GetComponent<ObstacleState>()));
+			m_obstaclesFirstRow.Add(new Obstacle(child.gameObject, child.GetComponent<ObstacleState>()));
 //			print (obstaclesFirstRow.Last().obstacleStateScript.name);
 		}
 		
-		foreach(Transform child in obstacleSecondRowParent.transform)
+		foreach(Transform child in m_obstacleSecondRowParent.transform)
 		{
-			obstaclesSecondRow.Add(new Obstacle(child.gameObject, child.GetComponent<ObstacleState>()));
+			m_obstaclesSecondRow.Add(new Obstacle(child.gameObject, child.GetComponent<ObstacleState>()));
 		}
 	}
 

@@ -1,116 +1,132 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 
 public class WorldGeneration : MonoBehaviour {
 
 	[SerializeField]
-	private bool gameIsPaused;
+	private bool m_gameIsPaused;
 
 	[SerializeField]
-	private float speed = 1.0f;
-	List<MapPart> mapParts = new List<MapPart>();
+	private float m_worldSpeed = 1.0f;
+	List<MapPart> m_mapParts = new List<MapPart>();
 
 	[SerializeField]
-	private GameObject mapPartsParent;
-	Vector3 mapPartSpawnPosition;
+	private GameObject m_mapPartsParent;
+	Vector3 m_mapPartSpawnPosition;
 
 	[SerializeField]
-	private GameObject currentMapPrefab;
+	private GameObject m_currentMapPrefab;
 
 	[SerializeField]
-	private float mapPartLength;
+	private float m_mapPartLength;
 
 	[SerializeField]
-	private int mapPartCount;
+	private int m_mapPartCount;
 
 	[SerializeField]
-	private bool generateObstacles;
+	private bool m_generateObstacles;
 
-	GameObject lastMapPart;
+    [SerializeField]
+    private HighScoreController m_highScoreController;
+
+	GameObject m_lastMapPart;
 
 	// Use this for initialization
 	void Start () 
 	{
-		mapPartSpawnPosition = new Vector3(0.0f, 0.0f, (mapPartCount-1) * mapPartLength);
+		m_mapPartSpawnPosition = new Vector3(0.0f, 0.0f, (m_mapPartCount-1) * m_mapPartLength);
 
-		for(int i=0; i<mapPartCount; i++)
+		for(int i=0; i<m_mapPartCount; i++)
 		{
-			SpawnMapPart(new Vector3(0.0f, 0.0f, i * mapPartLength), null);
+			SpawnMapPart(new Vector3(0.0f, 0.0f, i * m_mapPartLength), null);
 		}
 	}
 	
 	// Update is called once per frame
 	void Update () 
 	{
-		foreach(MapPart mapPart in mapParts.ToArray())
+		foreach(MapPart mapPart in m_mapParts.ToArray())
 		{
-			if(mapPart.mapPartGO.transform.position.z < -mapPartLength)
+			if(mapPart.MapPartGO.transform.position.z < -m_mapPartLength)
 			{
-				SpawnMapPart(mapPartSpawnPosition, mapPart);
-			}
+				SpawnMapPart(m_mapPartSpawnPosition, mapPart);
+                m_highScoreController.UpdateHighScoreBy(300);
+            }
 			//mapPart.transform.Translate(0.0f, 0.0f, -(1.0f * speed * Time.deltaTime));
 		}
 
-		if(!gameIsPaused)
+		if(!m_gameIsPaused)
 		{
-			mapPartsParent.transform.Translate(0.0f, 0.0f, -(1.0f * speed * Time.deltaTime));
+			m_mapPartsParent.transform.Translate(0.0f, 0.0f, -(1.0f * m_worldSpeed * Time.deltaTime));
 		}
 	}
 
+    /// <summary>
+    /// Can be called to pause or unpause the world generation.
+    /// </summary>
+    /// <param name="newPauseStatus"></param>
 	public void toggleWorldGeneration(bool newPauseStatus)
 	{
-		gameIsPaused = newPauseStatus;
+		m_gameIsPaused = newPauseStatus;
 	}
 
+    /// <summary>
+    /// Can be called to instantiate and set up a new map part at a certain position.
+    /// </summary>
+    /// <param name="spawnPosition"></param>
+    /// <returns></returns>
 	MapPart CreateMapPart(Vector3 spawnPosition)
 	{
-		GameObject createdMapPartGO = Instantiate(currentMapPrefab, spawnPosition, Quaternion.identity) as GameObject;
-		createdMapPartGO.transform.parent = mapPartsParent.transform;
+		GameObject createdMapPartGO = Instantiate(m_currentMapPrefab, spawnPosition, Quaternion.identity) as GameObject;
+		createdMapPartGO.transform.parent = m_mapPartsParent.transform;
 
 		MapPart createdMapPart = new MapPart(createdMapPartGO, createdMapPartGO.GetComponent<GenerateObstacles>());
-		mapParts.Add(createdMapPart);
+		m_mapParts.Add(createdMapPart);
 
 		return createdMapPart;
 	}
 
-	void SpawnMapPart(Vector3 spawnPosition, MapPart mapPartToSpawn)
+    /// <summary>
+    /// Handles Mappart pooling and positioning.
+    /// </summary>
+    /// <param name="spawnPosition">The position the mappart parameter should be set to</param>
+    /// <param name="mapPartToSpawn">The map part object that shall be spawned</param>
+	private void SpawnMapPart(Vector3 spawnPosition, MapPart mapPartToSpawn)
 	{
 		MapPart currentMapPart;
 
 		GameObject currentMapPartGO;
-		if(mapParts.Count < mapPartCount)
+		if(m_mapParts.Count < m_mapPartCount)
 		{
 			currentMapPart = CreateMapPart(spawnPosition);
-			currentMapPartGO = currentMapPart.mapPartGO;
+			currentMapPartGO = currentMapPart.MapPartGO;
 		}
 		else
 		{
 			//Reposition rather than destroying and instantiating
 			currentMapPart = mapPartToSpawn;
-			currentMapPartGO = currentMapPart.mapPartGO;
+			currentMapPartGO = currentMapPart.MapPartGO;
 			currentMapPartGO.transform.position = spawnPosition;
 		}
 
-		if(mapParts.Count > 1)
+		if(m_mapParts.Count > 1)
 		{
-			if(generateObstacles)
+			if(m_generateObstacles)
 			{
-				currentMapPart.obstacleGenScript.generateObstacles(0);
+				currentMapPart.ObstacleGenScript.generateObstacles(0);
 			}
 
 			//print ("generatedObstacles");
 
 			// To eliminated small displacements of mapParts
-			float lastMapPartPosZ = lastMapPart.transform.position.z;
-			if((currentMapPartGO.transform.position.z - lastMapPartPosZ) > mapPartLength)
+			float lastMapPartPosZ = m_lastMapPart.transform.position.z;
+			if((currentMapPartGO.transform.position.z - lastMapPartPosZ) > m_mapPartLength)
 			{
-				float correctedZPosition = currentMapPartGO.transform.position.z - ((currentMapPartGO.transform.position.z - lastMapPartPosZ) - mapPartLength);
+				float correctedZPosition = currentMapPartGO.transform.position.z - ((currentMapPartGO.transform.position.z - lastMapPartPosZ) - m_mapPartLength);
 				currentMapPartGO.transform.position = new Vector3(0.0f,0.0f, correctedZPosition);
 			}
 		}
 
-		lastMapPart = currentMapPartGO;
+		m_lastMapPart = currentMapPartGO;
 	}
 }

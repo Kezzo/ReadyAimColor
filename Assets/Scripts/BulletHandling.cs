@@ -4,46 +4,49 @@ using System.Collections;
 public class BulletHandling : MonoBehaviour {
 
 	[SerializeField]
-	private Material[] stateMaterials;
+	private Material[] m_stateMaterials;
 
 	[SerializeField]
-	private GameObject bulletModel;
+	private GameObject m_bulletModel;
 
 	[SerializeField]
-	private MeshRenderer bulletMeshRend;
+	private MeshRenderer m_bulletMeshRend;
 
-	float speed = 20.0f;
-	float activeTime;
+    [SerializeField]
+    private HighScoreController m_highScoreController;
 
-	PlayerControls.PlayerColorState bulletColorState = PlayerControls.PlayerColorState.GREEN;
+	private float m_speed = 20.0f;
+	private float m_activeTime;
+
+	ColorState m_bulletColorState = ColorState.GREEN;
 
 	// Update is called once per frame
 	void Update () 
 	{
-		this.transform.Translate((Vector3.forward * speed) * Time.deltaTime);
+		this.transform.Translate((Vector3.forward * m_speed) * Time.deltaTime);
 		this.transform.localEulerAngles = new Vector3(0.0f, 0.0f, (this.transform.localEulerAngles.z - (120.0f * Time.deltaTime)));
 
-		if(activeTime > 2.0f)
+		if(m_activeTime > 2.0f)
 		{
 			SimplePool.Despawn(this.gameObject);
 		}
 		else
 		{
-			activeTime += Time.deltaTime;
+			m_activeTime += Time.deltaTime;
 		}
 	}
 
 	void OnTriggerEnter(Collider other)
 	{
-		print(other.name);
+		//print(other.name);
 
 		switch(other.gameObject.GetComponent<ObstacleState>().getObstacleState())
 		{
-			case ObstacleState.ColorState.RED: redHit();
+			case ColorState.RED: redHit();
 					break;
-			case ObstacleState.ColorState.GREEN: greenHit(other.gameObject);
+			case ColorState.GREEN: greenHit(other.gameObject);
 					break;
-			case ObstacleState.ColorState.YELLOW: yellowHit(other.gameObject);
+			case ColorState.YELLOW: yellowHit(other.gameObject);
 					break;
 		}
 
@@ -57,38 +60,40 @@ public class BulletHandling : MonoBehaviour {
 
 	void greenHit(GameObject obstacle)
 	{
-		if(bulletColorState == PlayerControls.PlayerColorState.GREEN)
+		if(m_bulletColorState == ColorState.GREEN)
 		{
 			obstacle.SetActive(false);
-		}
+            //m_highScoreController.UpdateHighScoreBy(100);
+        }
 
 	}
 
 	void yellowHit(GameObject obstacle)
 	{
-		if(bulletColorState == PlayerControls.PlayerColorState.YELLOW)
+		if(m_bulletColorState == ColorState.YELLOW)
 		{
 			obstacle.SetActive(false);
-		}
+            //m_highScoreController.UpdateHighScoreBy(100);
+        }
 	}
 
-	public void setBulletState(PlayerControls.PlayerColorState playerColorState)
+	public void setBulletState(ColorState playerColorState)
 	{
-		if(playerColorState != bulletColorState)
+		if(playerColorState != m_bulletColorState)
 		{
-			if(bulletMeshRend == null)
+			if(m_bulletMeshRend == null)
 			{
-				bulletMeshRend = bulletModel.GetComponent<MeshRenderer>();
+				m_bulletMeshRend = m_bulletModel.GetComponent<MeshRenderer>();
 			}
 
 			switch(playerColorState)
 			{
-			case PlayerControls.PlayerColorState.GREEN: bulletMeshRend.material = stateMaterials[0];
-				break;
-			case PlayerControls.PlayerColorState.YELLOW: bulletMeshRend.material = stateMaterials[1];
-				break;
+			    case ColorState.GREEN: m_bulletMeshRend.material = m_stateMaterials[0];
+				    break;
+			    case ColorState.YELLOW: m_bulletMeshRend.material = m_stateMaterials[1];
+				    break;
 			}
-			bulletColorState = playerColorState;
+			m_bulletColorState = playerColorState;
 		}
 	}
 
@@ -96,6 +101,6 @@ public class BulletHandling : MonoBehaviour {
 	//and Start() is called only the first time the bullet is instantiated
 	public void resetBulletLiveTime()
 	{
-		activeTime = 0.0f;
+		m_activeTime = 0.0f;
 	}
 }

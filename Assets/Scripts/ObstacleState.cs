@@ -1,36 +1,44 @@
 ﻿using UnityEngine;
-using System.Collections;
 
+/// <summary>
+/// Each object reprents and handles the state of an obstacle
+/// </summary>
 public class ObstacleState : MonoBehaviour {
+    
+    [SerializeField]
+	private Material[] m_materials = new Material[3];
 
-	public Material[] materials = new Material[3];
-	public GameObject model;
-	MeshRenderer meshRend;
+    [SerializeField]
+    private GameObject m_model;
 
-	public enum ColorState {RED, GREEN, YELLOW, DISABLED};
+    private MeshRenderer m_meshRend;
 
-	ColorState colorState = ColorState.DISABLED;
+    private ColorState m_colorState = ColorState.DISABLED;
 
+    /// <summary>
+    /// Activates the Obstacle and sets a certain stage depending on the input parameter.
+    /// </summary>
+    /// <param name="stateID">The id for the stagethe obstacle should have.</param>
 	public void setStateAndActive(int stateID)
 	{
-		if(meshRend == null)
+		if(m_meshRend == null)
 		{
-			meshRend = GetMeshRenderer();
+			m_meshRend = GetMeshRenderer();
 		}
 
 		if(stateID < 3)
 		{
-			meshRend.material = materials[stateID];
+			m_meshRend.material = m_materials[stateID];
 
 			this.gameObject.SetActive(true);
 			
 			switch(stateID)
 			{
-			case 0: colorState = ColorState.RED;
+			case 0: m_colorState = ColorState.RED;
 				break;
-			case 1: colorState = ColorState.GREEN;
+			case 1: m_colorState = ColorState.GREEN;
 				break;
-			case 2: colorState = ColorState.YELLOW;
+			case 2: m_colorState = ColorState.YELLOW;
 				break;
 			}
 		}
@@ -43,12 +51,12 @@ public class ObstacleState : MonoBehaviour {
 
 	public ColorState getObstacleState()
 	{
-		ColorState returnColorState = colorState;
+		ColorState returnColorState = m_colorState;
 		return returnColorState;
 	}
 
 	MeshRenderer GetMeshRenderer()
 	{
-		return model.GetComponent<MeshRenderer>();
+		return m_model.GetComponent<MeshRenderer>();
 	}
 }

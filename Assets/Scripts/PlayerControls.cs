@@ -1,63 +1,58 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 
 public class PlayerControls : MonoBehaviour {
 
 	[SerializeField]
-	private GameObject playerModel;
+	private GameObject m_playerModel;
 
 	[SerializeField]
-	private Transform bulletParent;
+	private Transform m_bulletParent;
 
 	[SerializeField]
-	private WorldGeneration worldGenScript;
-	bool gameIsPaused;
+	private WorldGeneration m_worldGenScript;
+    private bool m_gameIsPaused;
 
 	[SerializeField]
-	private float sensitivity = 0.1f;
+	private float m_sensitivity = 0.1f;
 
 	[SerializeField]
-	private List<Transform> shootPositionList = new List<Transform>();
+	private List<Transform> m_shootPositionList = new List<Transform>();
 
 	[SerializeField]
-	private string currentBulletID;
-	Dictionary<string,GameObject> bulletsDict = new Dictionary<string,GameObject>();
+	private string m_currentBulletID;
+    private Dictionary<string,GameObject> m_bulletsDict = new Dictionary<string,GameObject>();
 
 	[SerializeField]
-	private LayerMask layerMaskWALL;
+	private LayerMask m_layerMaskWALL;
 
 	[SerializeField]
-	private float shipWidth = 0.0f;
+	private float m_shipWidth = 0.0f;
 
 	[SerializeField]
-	private float shootingCD = 0.0f;
-	float timeSinceLastBullet = 0.0f;
-
-
-	public enum PlayerColorState{GREEN, YELLOW};
+	private float m_shootingCD = 0.0f;
+    private float m_timeSinceLastBullet = 0.0f;
 
 	[SerializeField]
-	public PlayerColorState playerColorState = PlayerColorState.GREEN;
+    private ColorState m_playerColorState = ColorState.GREEN;
 
 	[SerializeField]
-	public Material[] stateMaterials;
-	MeshRenderer playerMeshRend;
+    private Material[] m_stateMaterials;
+    private MeshRenderer m_playerMeshRend;
 
 	[SerializeField]
-	public GameplayUI gameplayUI;
-	int lives = 4;
+    private GameplayUI m_gameplayUI;
+    private int m_lives = 4;
 
 	// Use this for initialization
 	void Start () 
 	{
-		playerMeshRend = playerModel.GetComponent<MeshRenderer>();
+		m_playerMeshRend = m_playerModel.GetComponent<MeshRenderer>();
 
 		Object[] loadedBullets = Resources.LoadAll("Bullets", typeof(GameObject));
 		for(int i=0; i<loadedBullets.Length; i++)
 		{
-			bulletsDict.Add (loadedBullets[i].name, loadedBullets[i] as GameObject);
+			m_bulletsDict.Add (loadedBullets[i].name, loadedBullets[i] as GameObject);
 //			print ("loaded Bullet: "+loadedBullets[i].name);
 		}
 	}
@@ -65,83 +60,83 @@ public class PlayerControls : MonoBehaviour {
 	// Update is called once per frame
 	void Update () 
 	{
-		if (!gameIsPaused) {
+		if (!m_gameIsPaused) {
 			checkWallDistanceOnXAxis(Input.acceleration.x);
-			timeSinceLastBullet -= Time.deltaTime;
+			m_timeSinceLastBullet -= Time.deltaTime;
 		}
 	}
 
 	void OnTriggerEnter(Collider other)
 	{
 //		print (other.name);
-		lives--;
-		gameplayUI.updateLiveUI(lives);
+		m_lives--;
+		m_gameplayUI.updateLiveUI(m_lives);
 		//print(lives);
 		other.gameObject.SetActive(false);
 
-		if(lives < 1)
+		if(m_lives < 1)
 		{
 			pauseGame(true);
-			gameplayUI.showGameOverMenu();
+			m_gameplayUI.showGameOverMenu();
 		}
 	}
 
 	public void pauseGame(bool pauseIt)
 	{
-		gameIsPaused = pauseIt;
-		worldGenScript.toggleWorldGeneration (gameIsPaused);
+		m_gameIsPaused = pauseIt;
+		m_worldGenScript.toggleWorldGeneration (m_gameIsPaused);
 	}
 
 	public void ToggleState()
 	{
-		if(playerColorState == PlayerColorState.GREEN)
+		if(m_playerColorState == ColorState.GREEN)
 		{
-			handlePlayerStateChange(PlayerColorState.YELLOW);
+			handlePlayerStateChange(ColorState.YELLOW);
 		}
-		else if(playerColorState == PlayerColorState.YELLOW)
+		else if(m_playerColorState == ColorState.YELLOW)
 		{
-			handlePlayerStateChange(PlayerColorState.GREEN);
+			handlePlayerStateChange(ColorState.GREEN);
 		}
 	}
 
 	public void shoot()
 	{
-		if(timeSinceLastBullet < 0.0f && !gameIsPaused)
+		if(m_timeSinceLastBullet < 0.0f && !m_gameIsPaused)
 		{
-			foreach(Transform shootPosition in shootPositionList)
+			foreach(Transform shootPosition in m_shootPositionList)
 			{
 				//shootPosition.LookAt(hit.point);
 				
-				GameObject bullet = SimplePool.Spawn(bulletsDict[currentBulletID], shootPosition.position, shootPosition.rotation);
-				bullet.transform.parent = bulletParent;
+				GameObject bullet = SimplePool.Spawn(m_bulletsDict[m_currentBulletID], shootPosition.position, shootPosition.rotation);
+				bullet.transform.parent = m_bulletParent;
 
 				BulletHandling bulletHandlingScript = bullet.GetComponent<BulletHandling>();
 				bulletHandlingScript.resetBulletLiveTime();
-				bulletHandlingScript.setBulletState(playerColorState);
+				bulletHandlingScript.setBulletState(m_playerColorState);
 
-				timeSinceLastBullet = shootingCD;
+				m_timeSinceLastBullet = m_shootingCD;
 			}
 		}
 	}
 	
-	void handlePlayerStateChange(PlayerColorState newPlayerColorState)
+	void handlePlayerStateChange(ColorState newPlayerColorState)
 	{
-		if(playerColorState != newPlayerColorState)
+		if(m_playerColorState != newPlayerColorState)
 		{
-			Material[] currentMaterials = playerMeshRend.materials;
-			playerColorState = newPlayerColorState;
+			Material[] currentMaterials = m_playerMeshRend.materials;
+			m_playerColorState = newPlayerColorState;
 			
-			switch(playerColorState)
+			switch(m_playerColorState)
 			{
-				case PlayerColorState.GREEN: currentMaterials[1] = stateMaterials[0];
-						gameplayUI.toggleColorSwitchUI(stateMaterials[0]);
+				case ColorState.GREEN: currentMaterials[1] = m_stateMaterials[0];
+						m_gameplayUI.toggleColorSwitchUI(m_stateMaterials[0]);
 						break;
-				case PlayerColorState.YELLOW: currentMaterials[1] = stateMaterials[1];
-						gameplayUI.toggleColorSwitchUI(stateMaterials[1]);
+				case ColorState.YELLOW: currentMaterials[1] = m_stateMaterials[1];
+						m_gameplayUI.toggleColorSwitchUI(m_stateMaterials[1]);
 						break;
 			}
 
-			playerMeshRend.materials = currentMaterials;
+			m_playerMeshRend.materials = currentMaterials;
 		}
 	}
 
@@ -150,12 +145,12 @@ public class PlayerControls : MonoBehaviour {
 		RaycastHit wallHit;
 		if(gyroScopeX > 0.0f)
 		{
-			if(Physics.Raycast(this.transform.position, Vector3.right, out wallHit, 100.0f,layerMaskWALL))
+			if(Physics.Raycast(this.transform.position, Vector3.right, out wallHit, 100.0f,m_layerMaskWALL))
 			{
 				Debug.DrawLine(this.transform.position,wallHit.point);
 				//print (wallHit.collider.name);
 
-				if(wallHit.distance > shipWidth)
+				if(wallHit.distance > m_shipWidth)
 				{
 					moveOnXAxis(gyroScopeX);
 				}
@@ -163,28 +158,28 @@ public class PlayerControls : MonoBehaviour {
 		}
 		else if(gyroScopeX < 0.0f)
 		{
-			if(Physics.Raycast(this.transform.position, Vector3.left, out wallHit, 20.0f, layerMaskWALL))
+			if(Physics.Raycast(this.transform.position, Vector3.left, out wallHit, 20.0f, m_layerMaskWALL))
 			{
 				Debug.DrawLine(this.transform.position,wallHit.point);
 //				print (wallHit.collider.name);
 
-				if(wallHit.distance > shipWidth)
+				if(wallHit.distance > m_shipWidth)
 				{
 					moveOnXAxis(gyroScopeX);
 				}
 			}
 		}
-		playerModel.transform.localEulerAngles = new Vector3(0.0f, 0.0f, -(gyroScopeX * 20.0f));
+		m_playerModel.transform.localEulerAngles = new Vector3(0.0f, 0.0f, -(gyroScopeX * 20.0f));
 	}
 
 	void moveOnXAxis(float gyroScopeX)
 	{
-		if(!gameIsPaused)
+		if(!m_gameIsPaused)
 		{
 			//print("gyroScopeX: "+Mathf.Abs(gyroScopeX));
 			if(Mathf.Abs(gyroScopeX) > 0.02f)
 			{
-				this.transform.Translate((gyroScopeX * sensitivity) * Time.deltaTime, 0.0f, 0.0f);
+				this.transform.Translate((gyroScopeX * m_sensitivity) * Time.deltaTime, 0.0f, 0.0f);
 				this.transform.position = new Vector3(this.transform.position.x, 1.0f, 0.0f);
 			}
 
