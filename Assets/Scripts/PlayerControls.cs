@@ -44,10 +44,17 @@ public class PlayerControls : MonoBehaviour {
     private GameplayUI m_gameplayUI;
     private int m_lives = 4;
 
+    [SerializeField]
+    private AudioSource m_shootAudioSource;
+
+    private AudioManager m_AudioManager;
+
 	// Use this for initialization
 	void Start () 
 	{
-		m_playerMeshRend = m_playerModel.GetComponent<MeshRenderer>();
+        m_AudioManager = AudioManager.Instance;
+
+        m_playerMeshRend = m_playerModel.GetComponent<MeshRenderer>();
 
 		Object[] loadedBullets = Resources.LoadAll("Bullets", typeof(GameObject));
 		for(int i=0; i<loadedBullets.Length; i++)
@@ -103,7 +110,9 @@ public class PlayerControls : MonoBehaviour {
 	{
 		if(m_timeSinceLastBullet < 0.0f && !m_gameIsPaused)
 		{
-			foreach(Transform shootPosition in m_shootPositionList)
+            m_AudioManager.GetSoundByID(Random.Range(0, 4)).Play();
+            
+            foreach (Transform shootPosition in m_shootPositionList)
 			{
 				//shootPosition.LookAt(hit.point);
 				
@@ -123,7 +132,7 @@ public class PlayerControls : MonoBehaviour {
 	{
 		if(m_playerColorState != newPlayerColorState)
 		{
-			Material[] currentMaterials = m_playerMeshRend.materials;
+			Material[] currentMaterials = m_playerMeshRend.sharedMaterials;
 			m_playerColorState = newPlayerColorState;
 			
 			switch(m_playerColorState)
@@ -136,7 +145,7 @@ public class PlayerControls : MonoBehaviour {
 						break;
 			}
 
-			m_playerMeshRend.materials = currentMaterials;
+			m_playerMeshRend.sharedMaterials = currentMaterials;
 		}
 	}
 

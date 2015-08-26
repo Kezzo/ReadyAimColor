@@ -56,7 +56,7 @@ public class WorldGeneration : MonoBehaviour {
 				SpawnMapPart(m_mapPartSpawnPosition, mapPart);
                 if(m_updateHighScore)
                 {
-                    m_highScoreController.UpdateHighScoreBy(300);
+                    m_highScoreController.UpdateHighScoreBy(3);
                 }
                 
             }

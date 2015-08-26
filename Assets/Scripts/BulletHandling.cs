@@ -66,7 +66,7 @@ public class BulletHandling : MonoBehaviour {
 		if(m_bulletColorState == ColorState.GREEN)
 		{
 			obstacle.SetActive(false);
-            m_highScoreController.UpdateHighScoreBy(100);
+            m_highScoreController.UpdateHighScoreBy(1);
         }
 
 	}
@@ -76,7 +76,7 @@ public class BulletHandling : MonoBehaviour {
 		if(m_bulletColorState == ColorState.YELLOW)
 		{
 			obstacle.SetActive(false);
-            m_highScoreController.UpdateHighScoreBy(100);
+            m_highScoreController.UpdateHighScoreBy(1);
         }
 	}
 
@@ -91,9 +91,9 @@ public class BulletHandling : MonoBehaviour {
 
 			switch(playerColorState)
 			{
-			    case ColorState.GREEN: m_bulletMeshRend.material = m_stateMaterials[0];
+			    case ColorState.GREEN: m_bulletMeshRend.sharedMaterial = m_stateMaterials[0];
 				    break;
-			    case ColorState.YELLOW: m_bulletMeshRend.material = m_stateMaterials[1];
+			    case ColorState.YELLOW: m_bulletMeshRend.sharedMaterial = m_stateMaterials[1];
 				    break;
 			}
 			m_bulletColorState = playerColorState;

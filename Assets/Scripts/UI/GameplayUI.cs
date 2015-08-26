@@ -9,12 +9,13 @@ public class GameplayUI : MonoBehaviour {
 	[SerializeField]
 	private List<GameObject> m_liveSprites = new List<GameObject>();
 
+    /*
 	[SerializeField]
 	private GameObject m_shiftArrow;
 	private MeshRenderer m_meshRendArrow;
 
 	[SerializeField]
-	private Material m_deactiveMaterial;
+	private Material m_deactiveMaterial;*/
 
 	[SerializeField]
 	private PlayerControls m_playerControls;
@@ -39,7 +40,7 @@ public class GameplayUI : MonoBehaviour {
 	// Use this for initialization
 	void Start () 
 	{
-		m_meshRendArrow = m_shiftArrow.GetComponent<MeshRenderer>();
+		//m_meshRendArrow = m_shiftArrow.GetComponent<MeshRenderer>();
         m_highScoreController = HighScoreController.Instance;
     }
 
@@ -57,6 +58,7 @@ public class GameplayUI : MonoBehaviour {
 
 	public void updateLiveUI(int currentlives)
 	{
+        //print("updateLiveUI");
 		if (m_liveSprites.ElementAt (currentlives) != null) {
 			m_liveSprites.ElementAt(currentlives).SetActive(false);
 		}
@@ -64,7 +66,7 @@ public class GameplayUI : MonoBehaviour {
 
 	public void toggleColorSwitchUI(Material activeMaterial)
 	{
-		m_meshRendArrow.material = activeMaterial;
+		//m_meshRendArrow.sharedMaterial = activeMaterial;
 	}
 
 	void OnApplicationPause(bool isPaused)

@@ -28,7 +28,7 @@ public class ObstacleState : MonoBehaviour {
 
 		if(stateID < 3)
 		{
-			m_meshRend.material = m_materials[stateID];
+			m_meshRend.sharedMaterial = m_materials[stateID];
 
 			this.gameObject.SetActive(true);
 			
