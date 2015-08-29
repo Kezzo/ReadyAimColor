@@ -4,4 +4,4 @@ A minimalistic Arcadeshooter for Android. You can switch between Colors to react
 
 The Code, 3D Art, UI sprites and Game Design is made by me aka Kezzo.
 
-Music and Sound effects are made by Franky.
+Music and Sound effects are made by Smoke.
