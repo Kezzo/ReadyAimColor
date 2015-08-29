@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 
 public class BulletHandling : MonoBehaviour {
 
@@ -12,7 +13,6 @@ public class BulletHandling : MonoBehaviour {
 	private MeshRenderer m_bulletMeshRend;
 
 	private float m_speed = 20.0f;
-	private float m_activeTime;
 
     private ColorState m_bulletColorState = ColorState.GREEN;
 
@@ -23,21 +23,24 @@ public class BulletHandling : MonoBehaviour {
         m_highScoreController = HighScoreController.Instance;
     }
 
+    void OnEnable()
+    {
+        StartCoroutine(DestoryAfter(2.0f));
+    }
+
 	// Update is called once per frame
 	void Update () 
 	{
 		this.transform.Translate((Vector3.forward * m_speed) * Time.deltaTime);
 		this.transform.localEulerAngles = new Vector3(0.0f, 0.0f, (this.transform.localEulerAngles.z - (120.0f * Time.deltaTime)));
+    }
 
-		if(m_activeTime > 2.0f)
-		{
-			SimplePool.Despawn(this.gameObject);
-		}
-		else
-		{
-			m_activeTime += Time.deltaTime;
-		}
-	}
+    private IEnumerator DestoryAfter(float secondsToWait)
+    {
+        Debug.Log("DestoryAfter called!");
+        yield return new WaitForSeconds(secondsToWait);
+        SimplePool.Despawn(this.gameObject);
+    }
 
 	void OnTriggerEnter(Collider other)
 	{
@@ -98,12 +101,5 @@ public class BulletHandling : MonoBehaviour {
 			}
 			m_bulletColorState = playerColorState;
 		}
-	}
-
-	// Needed for pooling the Bullets, because the Pool won't reset the time of the bullets 
-	//and Start() is called only the first time the bullet is instantiated
-	public void resetBulletLiveTime()
-	{
-		m_activeTime = 0.0f;
 	}
 }

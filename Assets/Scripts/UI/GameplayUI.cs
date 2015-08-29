@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.UI;
@@ -7,7 +6,7 @@ using UnityEngine.UI;
 public class GameplayUI : MonoBehaviour {
 
 	[SerializeField]
-	private List<GameObject> m_liveSprites = new List<GameObject>();
+	private GameObject[] m_liveSprites;
 
     /*
 	[SerializeField]
@@ -32,8 +31,6 @@ public class GameplayUI : MonoBehaviour {
     [SerializeField]
     private Text m_gameOverHighScoreText;
 
-    private HighScoreController m_highScoreController;
-
     private float m_startButtonCD = 0.0f;
     private bool m_decreaseStartCD;
 
@@ -41,7 +38,6 @@ public class GameplayUI : MonoBehaviour {
 	void Start () 
 	{
 		//m_meshRendArrow = m_shiftArrow.GetComponent<MeshRenderer>();
-        m_highScoreController = HighScoreController.Instance;
     }
 
     void Update()
@@ -59,9 +55,11 @@ public class GameplayUI : MonoBehaviour {
 	public void updateLiveUI(int currentlives)
 	{
         //print("updateLiveUI");
-		if (m_liveSprites.ElementAt (currentlives) != null) {
-			m_liveSprites.ElementAt(currentlives).SetActive(false);
-		}
+        if (currentlives < 0)
+            return;
+
+		if (m_liveSprites[currentlives] != null) 
+			m_liveSprites[currentlives].SetActive(false);
 	}
 
 	public void toggleColorSwitchUI(Material activeMaterial)
@@ -82,7 +80,7 @@ public class GameplayUI : MonoBehaviour {
         m_startButtonCD = 1.0f;
         m_decreaseStartCD = true;
         
-        int currentHighScore = m_highScoreController.GetCurrentHighScore();
+        int currentHighScore = HighScoreController.Instance.GetCurrentHighScore();
         PlayerPrefs.SetInt("LastHighScore", currentHighScore);
 
         int bestHighScore = PlayerPrefs.GetInt("BestHighScore");

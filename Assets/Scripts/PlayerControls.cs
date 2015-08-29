@@ -9,32 +9,24 @@ public class PlayerControls : MonoBehaviour {
 	[SerializeField]
 	private Transform m_bulletParent;
 
-	[SerializeField]
-	private WorldGeneration m_worldGenScript;
-    private bool m_gameIsPaused;
+    [SerializeField]
+    private Transform m_playerLerpPositionLeft;
 
+    [SerializeField]
+    private Transform m_playerLerpPositionRight;
+
+    [SerializeField]
+	private WorldGeneration m_worldGenScript;
+    
 	[SerializeField]
 	private float m_sensitivity = 0.1f;
 
 	[SerializeField]
-	private List<Transform> m_shootPositionList = new List<Transform>();
+	private Transform[] m_shootPositionList;
 
 	[SerializeField]
 	private string m_currentBulletID;
     private Dictionary<string,GameObject> m_bulletsDict = new Dictionary<string,GameObject>();
-
-	[SerializeField]
-	private LayerMask m_layerMaskWALL;
-
-	[SerializeField]
-	private float m_shipWidth = 0.0f;
-
-	[SerializeField]
-	private float m_shootingCD = 0.0f;
-    private float m_timeSinceLastBullet = 0.0f;
-
-	[SerializeField]
-    private ColorState m_playerColorState = ColorState.GREEN;
 
 	[SerializeField]
     private Material[] m_stateMaterials;
@@ -42,15 +34,22 @@ public class PlayerControls : MonoBehaviour {
 
 	[SerializeField]
     private GameplayUI m_gameplayUI;
-    private int m_lives = 4;
-
+    
     [SerializeField]
     private AudioSource m_shootAudioSource;
 
+    private float m_movementFraction = 0.5f;
+
+    private int m_lives = 4;
+
+    private bool m_gameIsPaused;
+
     private AudioManager m_AudioManager;
 
-	// Use this for initialization
-	void Start () 
+    private ColorState m_playerColorState = ColorState.GREEN;
+
+    // Use this for initialization
+    void Start () 
 	{
         m_AudioManager = AudioManager.Instance;
 
@@ -68,8 +67,7 @@ public class PlayerControls : MonoBehaviour {
 	void Update () 
 	{
 		if (!m_gameIsPaused) {
-			checkWallDistanceOnXAxis(Input.acceleration.x);
-			m_timeSinceLastBullet -= Time.deltaTime;
+            MoveOnXAxis(Input.acceleration.x);
 		}
 	}
 
@@ -108,22 +106,17 @@ public class PlayerControls : MonoBehaviour {
 
 	public void shoot()
 	{
-		if(m_timeSinceLastBullet < 0.0f && !m_gameIsPaused)
+		if(!m_gameIsPaused)
 		{
-            m_AudioManager.GetSoundByID(Random.Range(0, 4)).Play();
+            //m_AudioManager.GetSoundByID(Random.Range(0, 4)).Play();
             
             foreach (Transform shootPosition in m_shootPositionList)
 			{
-				//shootPosition.LookAt(hit.point);
-				
 				GameObject bullet = SimplePool.Spawn(m_bulletsDict[m_currentBulletID], shootPosition.position, shootPosition.rotation);
 				bullet.transform.parent = m_bulletParent;
 
 				BulletHandling bulletHandlingScript = bullet.GetComponent<BulletHandling>();
-				bulletHandlingScript.resetBulletLiveTime();
 				bulletHandlingScript.setBulletState(m_playerColorState);
-
-				m_timeSinceLastBullet = m_shootingCD;
 			}
 		}
 	}
@@ -149,49 +142,25 @@ public class PlayerControls : MonoBehaviour {
 		}
 	}
 
-	void checkWallDistanceOnXAxis(float gyroScopeX)
-	{
-		RaycastHit wallHit;
-		if(gyroScopeX > 0.0f)
-		{
-			if(Physics.Raycast(this.transform.position, Vector3.right, out wallHit, 100.0f,m_layerMaskWALL))
-			{
-				Debug.DrawLine(this.transform.position,wallHit.point);
-				//print (wallHit.collider.name);
-
-				if(wallHit.distance > m_shipWidth)
-				{
-					moveOnXAxis(gyroScopeX);
-				}
-			}
-		}
-		else if(gyroScopeX < 0.0f)
-		{
-			if(Physics.Raycast(this.transform.position, Vector3.left, out wallHit, 20.0f, m_layerMaskWALL))
-			{
-				Debug.DrawLine(this.transform.position,wallHit.point);
-//				print (wallHit.collider.name);
-
-				if(wallHit.distance > m_shipWidth)
-				{
-					moveOnXAxis(gyroScopeX);
-				}
-			}
-		}
-		m_playerModel.transform.localEulerAngles = new Vector3(0.0f, 0.0f, -(gyroScopeX * 20.0f));
-	}
-
-	void moveOnXAxis(float gyroScopeX)
+	private void MoveOnXAxis(float gyroScopeX)
 	{
 		if(!m_gameIsPaused)
 		{
-			//print("gyroScopeX: "+Mathf.Abs(gyroScopeX));
-			if(Mathf.Abs(gyroScopeX) > 0.02f)
-			{
-				this.transform.Translate((gyroScopeX * m_sensitivity) * Time.deltaTime, 0.0f, 0.0f);
-				this.transform.position = new Vector3(this.transform.position.x, 1.0f, 0.0f);
-			}
+            m_playerModel.transform.localEulerAngles = new Vector3(0.0f, 0.0f, -(gyroScopeX * 20.0f));
 
+            float fractionModifier = (gyroScopeX * m_sensitivity) * Time.deltaTime;
+
+            if (m_movementFraction < 0.0f)
+                m_movementFraction += fractionModifier;
+            else
+                m_movementFraction -= fractionModifier;
+
+            m_movementFraction = Mathf.Clamp(m_movementFraction, 0.0f, 1.0f);
+
+            if (Mathf.Abs(gyroScopeX) > 0.02f)
+            {
+                this.transform.position = Vector3.Lerp(m_playerLerpPositionLeft.position, m_playerLerpPositionRight.position, m_movementFraction);
+            }
 		}
 	}
 }
