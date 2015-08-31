@@ -37,7 +37,6 @@ public class BulletHandling : MonoBehaviour {
 
     private IEnumerator DestoryAfter(float secondsToWait)
     {
-        Debug.Log("DestoryAfter called!");
         yield return new WaitForSeconds(secondsToWait);
         SimplePool.Despawn(this.gameObject);
     }

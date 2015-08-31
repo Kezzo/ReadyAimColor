@@ -1,20 +1,10 @@
 ﻿using UnityEngine;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine.UI;
 
 public class GameplayUI : MonoBehaviour {
 
 	[SerializeField]
 	private GameObject[] m_liveSprites;
-
-    /*
-	[SerializeField]
-	private GameObject m_shiftArrow;
-	private MeshRenderer m_meshRendArrow;
-
-	[SerializeField]
-	private Material m_deactiveMaterial;*/
 
 	[SerializeField]
 	private PlayerControls m_playerControls;
@@ -34,12 +24,6 @@ public class GameplayUI : MonoBehaviour {
     private float m_startButtonCD = 0.0f;
     private bool m_decreaseStartCD;
 
-	// Use this for initialization
-	void Start () 
-	{
-		//m_meshRendArrow = m_shiftArrow.GetComponent<MeshRenderer>();
-    }
-
     void Update()
     {
         if(m_decreaseStartCD)
@@ -52,9 +36,12 @@ public class GameplayUI : MonoBehaviour {
         }
     }
 
-	public void updateLiveUI(int currentlives)
+    /// <summary>
+    /// Called to update the energy sprites to fit to the current health left
+    /// </summary>
+    /// <param name="currentlives"></param>
+	public void updateHealthUI(int currentlives)
 	{
-        //print("updateLiveUI");
         if (currentlives < 0)
             return;
 
@@ -62,19 +49,29 @@ public class GameplayUI : MonoBehaviour {
 			m_liveSprites[currentlives].SetActive(false);
 	}
 
+    /// <summary>
+    /// Called to toggle the color switch ui from one color to the other.
+    /// </summary>
+    /// <param name="activeMaterial"></param>
 	public void toggleColorSwitchUI(Material activeMaterial)
 	{
 		//m_meshRendArrow.sharedMaterial = activeMaterial;
 	}
 
+    /// <summary>
+    /// Called on android when the user closed the app to the background.
+    /// </summary>
+    /// <param name="isPaused"></param>
 	void OnApplicationPause(bool isPaused)
 	{
-		//print (pauseStatus);
 		if (isPaused) {
 			PauseGame();
 		}
 	}
 
+    /// <summary>
+    /// Saves the current highscore and displays the game over menu.
+    /// </summary>
 	public void showGameOverMenu()
 	{
         m_startButtonCD = 1.0f;
@@ -94,6 +91,9 @@ public class GameplayUI : MonoBehaviour {
         m_gameOverMenu.SetActive(true);
     }
 
+    /// <summary>
+    /// Starts a new game
+    /// </summary>
 	public void startNewGame()
 	{
         if(m_startButtonCD < 0.0f)
@@ -102,11 +102,17 @@ public class GameplayUI : MonoBehaviour {
         }
 	}
 
+    /// <summary>
+    /// Loads the main menu scene
+    /// </summary>
 	public void backToMenu()
 	{
 		Application.LoadLevel ("MainMenu");
 	}
 
+    /// <summary>
+    /// Pauses the game and show the pause menu.
+    /// </summary>
 	public void PauseGame()
 	{
 		m_playerControls.pauseGame (true);
@@ -114,6 +120,9 @@ public class GameplayUI : MonoBehaviour {
 		m_pauseButton.SetActive (false);
 	}
 
+    /// <summary>
+    /// Unpauses the game and hides the pause menu.
+    /// </summary>
 	public void UnPauseGame()
 	{
 		m_playerControls.pauseGame (false);

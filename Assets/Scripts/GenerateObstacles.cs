@@ -40,16 +40,18 @@ public class GenerateObstacles : MonoBehaviour {
 		}
 	}
 
-	void generateTutorialSequence()
+    private void generateTutorialSequence()
 	{
-
+        //TODO: Write generate Tutorial sequence
 	}
 
-	int[] generateLevel1Diff()
+	private int[] generateLevel1Diff()
 	{
 		int[] generatedIDs = new int[6];
 
 		int generatedReds = 0;
+        int generatedEmpties = 0;
+
 		for(int i=0; i<generatedIDs.Length; i++)
 		{
 			generatedIDs[i] = Random.Range(0,4);
@@ -58,19 +60,24 @@ public class GenerateObstacles : MonoBehaviour {
 			{
 				generatedReds++;
 			}
-		}
+
+            if (generatedIDs[i] == 3)
+            {
+                generatedEmpties++;
+            }
+        }
 
 //		print (generatedReds);
 
-		if (generatedReds > 5) {
-			print ("new id generation cause of 6 reds");
+		if (generatedReds > 5 || generatedEmpties > 4) {
+			print ("new id generation cause of 6 reds or 5+ empties");
 			generatedIDs = generateLevel1Diff();
 		}
 
 		return generatedIDs;
 	}
 
-	void getObstacles()
+    private void getObstacles()
 	{
 		//print ("getObstacles");
 		foreach(Transform child in m_obstacleFirstRowParent.transform)
@@ -85,24 +92,7 @@ public class GenerateObstacles : MonoBehaviour {
 		}
 	}
 
-	bool testGeneration()
-	{
-
-		int rnd = Random.Range(0,2);
-
-		bool returnVal = false;
-
-		if(rnd == 1)
-		{
-			returnVal = true;
-		}
-
-		//print(returnVal);
-
-		return returnVal;
-	}
-
-	void disableAllObstacles(List<Obstacle> obstacleList)
+    private void disableAllObstacles(List<Obstacle> obstacleList)
 	{
 		foreach(Obstacle obstacles in obstacleList)
 		{

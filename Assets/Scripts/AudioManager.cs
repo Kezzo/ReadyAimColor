@@ -6,8 +6,15 @@ public class AudioManager : MonoBehaviour {
     public static AudioManager Instance { get; private set; }
 
     [SerializeField]
-    private AudioSource[] m_audioSources;
-    //private Dictionary<string, AudioSource> m_audioSources;
+    private AudioSource[] m_audioShootSources;
+
+    [SerializeField]
+    private AudioClip[] m_shootSounds;
+
+    [SerializeField]
+    private int m_shootSoundID;
+
+    private int m_currentShootSoundCycleID = 0;
 
     void Awake()
     {
@@ -21,14 +28,24 @@ public class AudioManager : MonoBehaviour {
         DontDestroyOnLoad(gameObject);
     }
 
-    public AudioSource GetSoundByID(int soundID)
+    void Start()
     {
-        AudioSource audioSource;
-
-        audioSource = m_audioSources[soundID];
-        //m_audioSources.TryGetValue(soundID, out audioSource);
-
-        return audioSource;
+        PreloadAudioSourceWithClip(m_audioShootSources, m_shootSounds[m_shootSoundID]);
     }
 
+    public void PlayShootSound()
+    {
+        //m_audioShootSources[m_currentShootSoundCycleID].Play();
+        m_currentShootSoundCycleID++;
+
+        m_currentShootSoundCycleID = m_currentShootSoundCycleID > m_audioShootSources.Length - 1 ? 0 : m_currentShootSoundCycleID++;
+    }
+
+    private void PreloadAudioSourceWithClip(AudioSource[] audioSources, AudioClip audioClip)
+    {
+        foreach (AudioSource audioSource in audioSources)
+        {
+            audioSource.clip = audioClip;
+        }
+    }
 }

@@ -58,9 +58,7 @@ public class WorldGeneration : MonoBehaviour {
                 {
                     m_highScoreController.UpdateHighScoreBy(3);
                 }
-                
             }
-			//mapPart.transform.Translate(0.0f, 0.0f, -(1.0f * speed * Time.deltaTime));
 		}
 
 		if(!m_gameIsPaused)
@@ -123,8 +121,6 @@ public class WorldGeneration : MonoBehaviour {
 			{
 				currentMapPart.ObstacleGenScript.generateObstacles(0);
 			}
-
-			//print ("generatedObstacles");
 
 			// To eliminated small displacements of mapParts
 			float lastMapPartPosZ = m_lastMapPart.transform.position.z;

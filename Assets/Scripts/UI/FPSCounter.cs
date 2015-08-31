@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class FPSCounter : MonoBehaviour {
@@ -8,9 +9,19 @@ public class FPSCounter : MonoBehaviour {
 
     private int m_framesPerSecond;
 
-    void Update()
+    void Start()
     {
-        m_framesPerSecond = (int) (1.0f / Time.smoothDeltaTime);
-        m_fpsCounterText.text = m_framesPerSecond + " FPS";
+        StartCoroutine(DisplayFPS());
+    }
+
+    private IEnumerator DisplayFPS()
+    {
+        while(true)
+        {
+            m_framesPerSecond = (int)(1.0f / Time.smoothDeltaTime);
+            m_fpsCounterText.text = m_framesPerSecond + " FPS";
+
+            yield return new WaitForSeconds(0.5f);
+        }
     }
 }

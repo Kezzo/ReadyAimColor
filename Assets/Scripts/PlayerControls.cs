@@ -24,12 +24,13 @@ public class PlayerControls : MonoBehaviour {
 	[SerializeField]
 	private Transform[] m_shootPositionList;
 
-	[SerializeField]
-	private string m_currentBulletID;
-    private Dictionary<string,GameObject> m_bulletsDict = new Dictionary<string,GameObject>();
+    [SerializeField]
+    private GameObject m_bulletPrefab;
 
-	[SerializeField]
+    [SerializeField]
     private Material[] m_stateMaterials;
+
+    [SerializeField]
     private MeshRenderer m_playerMeshRend;
 
 	[SerializeField]
@@ -39,28 +40,16 @@ public class PlayerControls : MonoBehaviour {
     private AudioSource m_shootAudioSource;
 
     private float m_movementFraction = 0.5f;
-
     private int m_lives = 4;
-
     private bool m_gameIsPaused;
 
     private AudioManager m_AudioManager;
-
     private ColorState m_playerColorState = ColorState.GREEN;
 
     // Use this for initialization
     void Start () 
 	{
         m_AudioManager = AudioManager.Instance;
-
-        m_playerMeshRend = m_playerModel.GetComponent<MeshRenderer>();
-
-		Object[] loadedBullets = Resources.LoadAll("Bullets", typeof(GameObject));
-		for(int i=0; i<loadedBullets.Length; i++)
-		{
-			m_bulletsDict.Add (loadedBullets[i].name, loadedBullets[i] as GameObject);
-//			print ("loaded Bullet: "+loadedBullets[i].name);
-		}
 	}
 	
 	// Update is called once per frame
@@ -73,10 +62,8 @@ public class PlayerControls : MonoBehaviour {
 
 	void OnTriggerEnter(Collider other)
 	{
-//		print (other.name);
 		m_lives--;
-		m_gameplayUI.updateLiveUI(m_lives);
-		//print(lives);
+		m_gameplayUI.updateHealthUI(m_lives);
 		other.gameObject.SetActive(false);
 
 		if(m_lives < 1)
@@ -108,11 +95,11 @@ public class PlayerControls : MonoBehaviour {
 	{
 		if(!m_gameIsPaused)
 		{
-            //m_AudioManager.GetSoundByID(Random.Range(0, 4)).Play();
-            
+            m_AudioManager.PlayShootSound();
+
             foreach (Transform shootPosition in m_shootPositionList)
 			{
-				GameObject bullet = SimplePool.Spawn(m_bulletsDict[m_currentBulletID], shootPosition.position, shootPosition.rotation);
+				GameObject bullet = SimplePool.Spawn(m_bulletPrefab, shootPosition.position, shootPosition.rotation);
 				bullet.transform.parent = m_bulletParent;
 
 				BulletHandling bulletHandlingScript = bullet.GetComponent<BulletHandling>();
