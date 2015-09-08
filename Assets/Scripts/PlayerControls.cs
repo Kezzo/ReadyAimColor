@@ -1,9 +1,11 @@
 ﻿using UnityEngine;
-using System.Collections.Generic;
 
 public class PlayerControls : MonoBehaviour {
 
-	[SerializeField]
+    [SerializeField]
+    private float m_forwardSpeed;
+
+    [SerializeField]
 	private GameObject m_playerModel;
 
 	[SerializeField]
@@ -57,7 +59,8 @@ public class PlayerControls : MonoBehaviour {
 	{
 		if (!m_gameIsPaused) {
             MoveOnXAxis(Input.acceleration.x);
-		}
+            //MoveOnZAxis();
+        }
 	}
 
 	void OnTriggerEnter(Collider other)
@@ -129,25 +132,30 @@ public class PlayerControls : MonoBehaviour {
 		}
 	}
 
+    private void MoveOnZAxis()
+    {
+        transform.Translate(new Vector3(0f, 0f, m_forwardSpeed * Time.deltaTime));
+
+        m_playerLerpPositionLeft.position = new Vector3(m_playerLerpPositionLeft.position.x, m_playerLerpPositionLeft.position.y, transform.position.z);
+        m_playerLerpPositionRight.position = new Vector3(m_playerLerpPositionRight.position.x, m_playerLerpPositionRight.position.y, transform.position.z);
+    }
+
 	private void MoveOnXAxis(float gyroScopeX)
 	{
-		if(!m_gameIsPaused)
-		{
-            m_playerModel.transform.localEulerAngles = new Vector3(0.0f, 0.0f, -(gyroScopeX * 20.0f));
+        m_playerModel.transform.localEulerAngles = new Vector3(0.0f, 0.0f, -(gyroScopeX * 20.0f));
 
-            float fractionModifier = (gyroScopeX * m_sensitivity) * Time.deltaTime;
+        float fractionModifier = gyroScopeX * m_sensitivity * Time.deltaTime;
 
-            if (m_movementFraction < 0.0f)
-                m_movementFraction += fractionModifier;
-            else
-                m_movementFraction -= fractionModifier;
+        if (m_movementFraction < 0.0f)
+            m_movementFraction += fractionModifier;
+        else
+            m_movementFraction -= fractionModifier;
 
-            m_movementFraction = Mathf.Clamp(m_movementFraction, 0.0f, 1.0f);
+        m_movementFraction = Mathf.Clamp(m_movementFraction, 0.0f, 1.0f);
 
-            if (Mathf.Abs(gyroScopeX) > 0.02f)
-            {
-                this.transform.position = Vector3.Lerp(m_playerLerpPositionLeft.position, m_playerLerpPositionRight.position, m_movementFraction);
-            }
-		}
+        if (Mathf.Abs(gyroScopeX) > 0.02f)
+        {
+            this.transform.position = Vector3.Lerp(m_playerLerpPositionLeft.position, m_playerLerpPositionRight.position, m_movementFraction);
+        }
 	}
 }

@@ -14,6 +14,9 @@ public class AudioManager : MonoBehaviour {
     [SerializeField]
     private int m_shootSoundID;
 
+    [SerializeField]
+    private bool m_muteSound;
+
     private int m_currentShootSoundCycleID = 0;
 
     void Awake()
@@ -35,6 +38,9 @@ public class AudioManager : MonoBehaviour {
 
     public void PlayShootSound()
     {
+        if (m_muteSound)
+            return;
+
         //m_audioShootSources[m_currentShootSoundCycleID].Play();
         m_currentShootSoundCycleID++;
 

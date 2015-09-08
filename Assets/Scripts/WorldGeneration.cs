@@ -63,7 +63,7 @@ public class WorldGeneration : MonoBehaviour {
 
 		if(!m_gameIsPaused)
 		{
-			m_mapPartsParent.transform.Translate(0.0f, 0.0f, -(1.0f * m_worldSpeed * Time.deltaTime));
+			m_mapPartsParent.transform.Translate(0.0f, 0.0f, -(m_worldSpeed * Time.deltaTime));
 		}
 	}
 

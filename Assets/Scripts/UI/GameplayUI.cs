@@ -21,6 +21,12 @@ public class GameplayUI : MonoBehaviour {
     [SerializeField]
     private Text m_gameOverHighScoreText;
 
+    [SerializeField]
+    private GameObject m_colorToggleButton;
+
+    [SerializeField]
+    private GameObject m_highScoreText;
+
     private float m_startButtonCD = 0.0f;
     private bool m_decreaseStartCD;
 
@@ -89,6 +95,10 @@ public class GameplayUI : MonoBehaviour {
         m_gameOverHighScoreText.text = currentHighScore.ToString();
 
         m_gameOverMenu.SetActive(true);
+
+        m_colorToggleButton.SetActive(false);
+        m_highScoreText.SetActive(false);
+        m_pauseButton.SetActive(false);
     }
 
     /// <summary>
