@@ -26,21 +26,22 @@ public class ObstacleState : MonoBehaviour {
 			m_meshRend = GetMeshRenderer();
 		}
 
-		if(stateID < 3)
+		if(stateID > 0)
 		{
-			m_meshRend.sharedMaterial = m_materials[stateID];
+			m_meshRend.sharedMaterial = m_materials[stateID-1];
 
 			this.gameObject.SetActive(true);
 			
 			switch(stateID)
 			{
-			case 0: m_colorState = ColorState.RED;
-				break;
-			case 1: m_colorState = ColorState.GREEN;
-				break;
-			case 2: m_colorState = ColorState.YELLOW;
-				break;
-			}
+			    case 1: m_colorState = ColorState.GREEN;
+				    break;
+			    case 2: m_colorState = ColorState.YELLOW;
+				    break;
+                case 3:
+                    m_colorState = ColorState.RED;
+                    break;
+            }
 		}
 		else
 		{

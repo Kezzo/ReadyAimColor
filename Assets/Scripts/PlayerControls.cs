@@ -41,6 +41,9 @@ public class PlayerControls : MonoBehaviour {
     [SerializeField]
     private AudioSource m_shootAudioSource;
 
+    [SerializeField]
+    private ParticleSystemRenderer[] m_particleRenderer;
+
     private float m_movementFraction = 0.5f;
     private int m_lives = 4;
     private bool m_gameIsPaused;
@@ -110,8 +113,8 @@ public class PlayerControls : MonoBehaviour {
 			}
 		}
 	}
-	
-	void handlePlayerStateChange(ColorState newPlayerColorState)
+
+    private void handlePlayerStateChange(ColorState newPlayerColorState)
 	{
 		if(m_playerColorState != newPlayerColorState)
 		{
@@ -120,12 +123,21 @@ public class PlayerControls : MonoBehaviour {
 			
 			switch(m_playerColorState)
 			{
-				case ColorState.GREEN: currentMaterials[1] = m_stateMaterials[0];
-						m_gameplayUI.toggleColorSwitchUI(m_stateMaterials[0]);
-						break;
-				case ColorState.YELLOW: currentMaterials[1] = m_stateMaterials[1];
-						m_gameplayUI.toggleColorSwitchUI(m_stateMaterials[1]);
-						break;
+				case ColorState.GREEN:
+                    currentMaterials[1] = m_stateMaterials[0];
+					m_gameplayUI.toggleColorSwitchUI(newPlayerColorState);
+
+                    m_particleRenderer[0].material = m_stateMaterials[0];
+                    m_particleRenderer[1].material = m_stateMaterials[0];
+                    break;
+
+				case ColorState.YELLOW:
+                    currentMaterials[1] = m_stateMaterials[1];
+					m_gameplayUI.toggleColorSwitchUI(newPlayerColorState);
+
+                    m_particleRenderer[0].material = m_stateMaterials[1];
+                    m_particleRenderer[1].material = m_stateMaterials[1];
+                    break;
 			}
 
 			m_playerMeshRend.sharedMaterials = currentMaterials;

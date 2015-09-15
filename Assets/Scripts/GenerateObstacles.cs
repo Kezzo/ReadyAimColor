@@ -24,26 +24,51 @@ public class GenerateObstacles : MonoBehaviour {
 
 		disableAllObstacles(m_obstaclesFirstRow);
 		int[] generatedIDs = new int[6];
-		generatedIDs = generateLevel1Diff();
 
-		for(int i=0; i<m_obstaclesFirstRow.Count; i++)
+        if(difficultyLevel >= 3)
+		    generatedIDs = generateLevel1Diff();
+        else
+            generatedIDs = generateTutorialSequence(difficultyLevel);
+
+        for (int i=0; i<m_obstaclesFirstRow.Count; i++)
 		{
 			m_obstaclesFirstRow[i].obstacleStateScript.setStateAndActive(generatedIDs[i]);
 		}
 
 		disableAllObstacles(m_obstaclesSecondRow);
-		generatedIDs = generateLevel1Diff();
 
-		for(int i=0; i<m_obstaclesFirstRow.Count; i++)
+        generatedIDs = new int[6];
+
+        if (difficultyLevel >= 3)
+		    generatedIDs = generateLevel1Diff();
+
+        for (int i=0; i<m_obstaclesFirstRow.Count; i++)
 		{
 			m_obstaclesSecondRow[i].obstacleStateScript.setStateAndActive(generatedIDs[i]);
 		}
 	}
 
-    private void generateTutorialSequence()
+    private int[] generateTutorialSequence(int generationIndex)
 	{
-        //TODO: Write generate Tutorial sequence
-	}
+        int[] generatedIDs = null;
+
+        switch(generationIndex)
+        {
+            case 0:
+                generatedIDs = new int[] { 1, 1, 1, 1, 1, 1 };
+                break;
+
+            case 1:
+                generatedIDs = new int[] { 2, 2, 2, 2, 2, 2 };
+                break;
+
+            case 2:
+                generatedIDs = new int[] { 0, 3, 3, 0, 3, 3 };
+                break;
+        }
+
+        return generatedIDs;
+    }
 
 	private int[] generateLevel1Diff()
 	{
@@ -56,12 +81,12 @@ public class GenerateObstacles : MonoBehaviour {
 		{
 			generatedIDs[i] = Random.Range(0,4);
 //			print (generatedIDs[i]);
-			if(generatedIDs[i] == 0)
+			if(generatedIDs[i] == 3)
 			{
 				generatedReds++;
 			}
 
-            if (generatedIDs[i] == 3)
+            if (generatedIDs[i] == 0)
             {
                 generatedEmpties++;
             }

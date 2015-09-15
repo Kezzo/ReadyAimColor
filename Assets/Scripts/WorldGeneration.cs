@@ -33,9 +33,18 @@ public class WorldGeneration : MonoBehaviour {
 
     private HighScoreController m_highScoreController;
 
+    private bool generatedTutorialSequence;
+    private int tutorialSequenceIndex = 0;
+
 	// Use this for initialization
 	void Start () 
 	{
+        //Clean up maptiles left from editor.
+        foreach(Transform child in m_mapPartsParent.transform)
+        {
+            Destroy(child.gameObject);
+        }
+
         m_highScoreController = HighScoreController.Instance;
 
         m_mapPartSpawnPosition = new Vector3(0.0f, 0.0f, (m_mapPartCount-1) * m_mapPartLength);
@@ -119,8 +128,18 @@ public class WorldGeneration : MonoBehaviour {
 		{
 			if(m_generateObstacles)
 			{
-				currentMapPart.ObstacleGenScript.generateObstacles(0);
-			}
+                if (generatedTutorialSequence)
+                    currentMapPart.ObstacleGenScript.generateObstacles(3);
+                else
+                {
+                    currentMapPart.ObstacleGenScript.generateObstacles(tutorialSequenceIndex);
+                    tutorialSequenceIndex++;
+
+                    if(tutorialSequenceIndex == 3)
+                        generatedTutorialSequence = true;
+                }
+                    
+            }
 
 			// To eliminated small displacements of mapParts
 			float lastMapPartPosZ = m_lastMapPart.transform.position.z;

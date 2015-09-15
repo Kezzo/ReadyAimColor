@@ -6,7 +6,10 @@ public class GameplayUI : MonoBehaviour {
 	[SerializeField]
 	private GameObject[] m_liveSprites;
 
-	[SerializeField]
+    [SerializeField]
+    private Sprite[] m_colorSwitchSprites;
+
+    [SerializeField]
 	private PlayerControls m_playerControls;
 
 	[SerializeField]
@@ -22,7 +25,7 @@ public class GameplayUI : MonoBehaviour {
     private Text m_gameOverHighScoreText;
 
     [SerializeField]
-    private GameObject m_colorToggleButton;
+    private Image m_colorToggleButton;
 
     [SerializeField]
     private GameObject m_highScoreText;
@@ -59,10 +62,10 @@ public class GameplayUI : MonoBehaviour {
     /// Called to toggle the color switch ui from one color to the other.
     /// </summary>
     /// <param name="activeMaterial"></param>
-	public void toggleColorSwitchUI(Material activeMaterial)
+	public void toggleColorSwitchUI(ColorState colorState)
 	{
-		//m_meshRendArrow.sharedMaterial = activeMaterial;
-	}
+        m_colorToggleButton.sprite = colorState == ColorState.GREEN ? m_colorSwitchSprites[0] : m_colorSwitchSprites[1];
+    }
 
     /// <summary>
     /// Called on android when the user closed the app to the background.
@@ -96,7 +99,7 @@ public class GameplayUI : MonoBehaviour {
 
         m_gameOverMenu.SetActive(true);
 
-        m_colorToggleButton.SetActive(false);
+        m_colorToggleButton.gameObject.SetActive(false);
         m_highScoreText.SetActive(false);
         m_pauseButton.SetActive(false);
     }
