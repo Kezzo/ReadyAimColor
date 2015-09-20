@@ -1,24 +1,27 @@
 ﻿using UnityEngine;
 
+/// <summary>
+/// Struct to use the Obstacle GameObject and ObstacleState script with one struct.
+/// </summary>
 public struct Obstacle
 {
-    private GameObject _obstacleGO;
+    private GameObject m_obstacleGO;
     public GameObject obstacleGO
     {
-        get { return _obstacleGO; }
-        set { _obstacleGO = value; }
+        get { return m_obstacleGO; }
+        set { m_obstacleGO = value; }
     }
 
-    private ObstacleState _obstacleStateScript;
+    private ObstacleState m_obstacleStateScript;
     public ObstacleState obstacleStateScript
     {
-        get { return _obstacleStateScript; }
-        set { _obstacleStateScript = value; }
+        get { return m_obstacleStateScript; }
+        set { m_obstacleStateScript = value; }
     }
 
     public Obstacle(GameObject obstacle, ObstacleState obstacleState)
     {
-        _obstacleGO = obstacle;
-        _obstacleStateScript = obstacleState;
+        m_obstacleGO = obstacle;
+        m_obstacleStateScript = obstacleState;
     }
 }

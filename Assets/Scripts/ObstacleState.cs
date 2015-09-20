@@ -6,14 +6,18 @@
 public class ObstacleState : MonoBehaviour {
     
     [SerializeField]
-	private Material[] m_materials = new Material[3];
+	private Material[] m_stateMaterials = new Material[3];
 
     [SerializeField]
-    private GameObject m_model;
+    private GameObject m_obstacleModel;
 
-    private MeshRenderer m_meshRend;
+    [SerializeField]
+    private ParticleSystem m_obstacleDestructionPFX;
+
+    private MeshRenderer m_meshRenderer;
 
     private ColorState m_colorState = ColorState.DISABLED;
+    public ColorState ObstacleColorState { get { return m_colorState; } }
 
     /// <summary>
     /// Activates the Obstacle and sets a certain stage depending on the input parameter.
@@ -21,16 +25,17 @@ public class ObstacleState : MonoBehaviour {
     /// <param name="stateID">The id for the stagethe obstacle should have.</param>
 	public void setStateAndActive(int stateID)
 	{
-		if(m_meshRend == null)
+		if(m_meshRenderer == null)
 		{
-			m_meshRend = GetMeshRenderer();
+			m_meshRenderer = m_obstacleModel.GetComponent<MeshRenderer>();
 		}
 
 		if(stateID > 0)
 		{
-			m_meshRend.sharedMaterial = m_materials[stateID-1];
+            if(m_meshRenderer != null)
+			    m_meshRenderer.sharedMaterial = m_stateMaterials[stateID-1];
 
-			this.gameObject.SetActive(true);
+			gameObject.SetActive(true);
 			
 			switch(stateID)
 			{
@@ -45,19 +50,27 @@ public class ObstacleState : MonoBehaviour {
 		}
 		else
 		{
-			this.gameObject.SetActive(false);
+			gameObject.SetActive(false);
 		}
-
 	}
 
-	public ColorState getObstacleState()
-	{
-		ColorState returnColorState = m_colorState;
-		return returnColorState;
-	}
+    /// <summary>
+    /// Handles the a collision with this obstacle.
+    /// Plays PFX and deactives the obstacle.
+    /// </summary>
+    /// <param name="obstacle"></param>
+    public void HandleObstacleCollision()
+    {
+        gameObject.SetActive(false);
 
-	MeshRenderer GetMeshRenderer()
-	{
-		return m_model.GetComponent<MeshRenderer>();
-	}
+        ParticleSystemRenderer particleSystemRenderer = m_obstacleDestructionPFX.GetComponent<ParticleSystemRenderer>();
+
+        if (particleSystemRenderer != null)
+            particleSystemRenderer.material = m_stateMaterials[(int) m_colorState];
+
+        GameObject obstacleDestructionPFXGO = SimplePool.Spawn(m_obstacleDestructionPFX.gameObject, gameObject.transform.position, Quaternion.identity) as GameObject;
+        obstacleDestructionPFXGO.transform.SetParent(gameObject.transform.parent.transform);
+
+        m_obstacleDestructionPFX.Play();
+    }
 }

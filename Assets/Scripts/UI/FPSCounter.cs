@@ -2,6 +2,10 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// Class to handle the FPS Counter.
+/// Only activated for debug purposes.
+/// </summary>
 public class FPSCounter : MonoBehaviour {
 
     [SerializeField]

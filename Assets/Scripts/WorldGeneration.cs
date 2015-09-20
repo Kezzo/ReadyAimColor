@@ -1,14 +1,17 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using System.Collections;
 
+/// <summary>
+/// Class to handle MapPart/World generation.
+/// </summary>
 public class WorldGeneration : MonoBehaviour {
 
-	[SerializeField]
-	private bool m_gameIsPaused;
+    [SerializeField]
+    private GameObject m_playerGameObject;
 
-	[SerializeField]
-	private float m_worldSpeed = 1.0f;
-	List<MapPart> m_mapParts = new List<MapPart>();
+    [SerializeField]
+	private bool m_gameIsPaused;
 
 	[SerializeField]
 	private GameObject m_mapPartsParent;
@@ -20,8 +23,11 @@ public class WorldGeneration : MonoBehaviour {
 	[SerializeField]
 	private float m_mapPartLength;
 
-	[SerializeField]
-	private int m_mapPartCount;
+    [SerializeField]
+    private float m_mapPartMargin;
+
+    [SerializeField]
+	private int m_generalMapPartCount;
 
 	[SerializeField]
 	private bool m_generateObstacles;
@@ -29,12 +35,15 @@ public class WorldGeneration : MonoBehaviour {
     [SerializeField]
     private bool m_updateHighScore;
 
+    List<MapPart> m_mapParts = new List<MapPart>();
+
     private GameObject m_lastMapPart;
 
     private HighScoreController m_highScoreController;
 
-    private bool generatedTutorialSequence;
-    private int tutorialSequenceIndex = 0;
+    private bool m_generatedTutorialSequence;
+    private int m_tutorialSequenceIndex = 0;
+    private int m_generatedMapPartsThisSession;
 
 	// Use this for initialization
 	void Start () 
@@ -47,34 +56,44 @@ public class WorldGeneration : MonoBehaviour {
 
         m_highScoreController = HighScoreController.Instance;
 
-        m_mapPartSpawnPosition = new Vector3(0.0f, 0.0f, (m_mapPartCount-1) * m_mapPartLength);
+        m_mapPartSpawnPosition = new Vector3(0.0f, 0.0f, (m_generalMapPartCount - 1) * m_mapPartLength);
+        m_generatedMapPartsThisSession = m_generalMapPartCount;
 
-		for(int i=0; i<m_mapPartCount; i++)
+        for (int i=0; i<m_generalMapPartCount; i++)
 		{
 			SpawnMapPart(new Vector3(0.0f, 0.0f, i * m_mapPartLength), null);
 		}
-	}
-	
-	// Update is called once per frame
-	void Update () 
-	{
-		foreach(MapPart mapPart in m_mapParts.ToArray())
-		{
-			if(mapPart.MapPartGO.transform.position.z < -m_mapPartLength)
-			{
-				SpawnMapPart(m_mapPartSpawnPosition, mapPart);
-                if(m_updateHighScore)
+
+        StartCoroutine(CheckMapPartPositioning(0.5f));
+    }
+
+    /// <summary>
+    /// Checks the MapPart positioning in a certain interval and respositions MapParts if necessary.
+    /// Also increases the highscore when a MapPart is respawned.
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator CheckMapPartPositioning(float delayBetweenEachCheck)
+    {
+        while(!m_gameIsPaused)
+        {
+            foreach (MapPart mapPart in m_mapParts.ToArray())
+            {
+                if ((mapPart.EndPointGO.transform.position.z + m_mapPartMargin) < m_playerGameObject.transform.position.z)
                 {
-                    m_highScoreController.UpdateHighScoreBy(3);
+                    m_generatedMapPartsThisSession++;
+                    m_mapPartSpawnPosition = new Vector3(0.0f, 0.0f, (m_generatedMapPartsThisSession - 1) * m_mapPartLength);
+
+                    SpawnMapPart(m_mapPartSpawnPosition, mapPart);
+                    if (m_updateHighScore)
+                    {
+                        m_highScoreController.UpdateHighScoreBy(3);
+                    }
                 }
             }
-		}
 
-		if(!m_gameIsPaused)
-		{
-			m_mapPartsParent.transform.Translate(0.0f, 0.0f, -(m_worldSpeed * Time.deltaTime));
-		}
-	}
+            yield return new WaitForSeconds(delayBetweenEachCheck);
+        }
+    }
 
     /// <summary>
     /// Can be called to pause or unpause the world generation.
@@ -95,7 +114,9 @@ public class WorldGeneration : MonoBehaviour {
 		GameObject createdMapPartGO = Instantiate(m_currentMapPrefab, spawnPosition, Quaternion.identity) as GameObject;
 		createdMapPartGO.transform.parent = m_mapPartsParent.transform;
 
-		MapPart createdMapPart = new MapPart(createdMapPartGO, createdMapPartGO.GetComponent<GenerateObstacles>());
+        ObstacleGenerator generateObstaclesScript = createdMapPartGO.GetComponent<ObstacleGenerator>();
+
+        MapPart createdMapPart = new MapPart(createdMapPartGO, generateObstaclesScript, generateObstaclesScript.MapPartEndPoint);
 		m_mapParts.Add(createdMapPart);
 
 		return createdMapPart;
@@ -111,7 +132,7 @@ public class WorldGeneration : MonoBehaviour {
 		MapPart currentMapPart;
 
 		GameObject currentMapPartGO;
-		if(m_mapParts.Count < m_mapPartCount)
+		if(m_mapParts.Count < m_generalMapPartCount)
 		{
 			currentMapPart = CreateMapPart(spawnPosition);
 			currentMapPartGO = currentMapPart.MapPartGO;
@@ -128,15 +149,15 @@ public class WorldGeneration : MonoBehaviour {
 		{
 			if(m_generateObstacles)
 			{
-                if (generatedTutorialSequence)
-                    currentMapPart.ObstacleGenScript.generateObstacles(3);
+                if (m_generatedTutorialSequence)
+                    currentMapPart.ObstacleGenScript.GenerateObstacles(3);
                 else
                 {
-                    currentMapPart.ObstacleGenScript.generateObstacles(tutorialSequenceIndex);
-                    tutorialSequenceIndex++;
+                    currentMapPart.ObstacleGenScript.GenerateObstacles(m_tutorialSequenceIndex);
+                    m_tutorialSequenceIndex++;
 
-                    if(tutorialSequenceIndex == 3)
-                        generatedTutorialSequence = true;
+                    if(m_tutorialSequenceIndex == 3)
+                        m_generatedTutorialSequence = true;
                 }
                     
             }

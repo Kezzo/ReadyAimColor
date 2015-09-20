@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// Handles the data display in the MainMenu UI.
+/// </summary>
 public class MainMenuUI : MonoBehaviour {
 
 	[SerializeField]

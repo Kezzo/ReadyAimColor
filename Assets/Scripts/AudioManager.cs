@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
+/// <summary>
+/// Singleton to handle music and AFX playback.
+/// </summary>
 public class AudioManager : MonoBehaviour {
 
     public static AudioManager Instance { get; private set; }
@@ -36,6 +38,9 @@ public class AudioManager : MonoBehaviour {
         PreloadAudioSourceWithClip(m_audioShootSources, m_shootSounds[m_shootSoundID]);
     }
 
+    /// <summary>
+    /// Plays the shoot sound.
+    /// </summary>
     public void PlayShootSound()
     {
         if (m_muteSound)
@@ -47,6 +52,11 @@ public class AudioManager : MonoBehaviour {
         m_currentShootSoundCycleID = m_currentShootSoundCycleID > m_audioShootSources.Length - 1 ? 0 : m_currentShootSoundCycleID++;
     }
 
+    /// <summary>
+    /// Preloads the AudioSources with AudioClips.
+    /// </summary>
+    /// <param name="audioSources">The AudioSources to load.</param>
+    /// <param name="audioClip">The AudioClip the AudioSources should be loaded with.</param>
     private void PreloadAudioSourceWithClip(AudioSource[] audioSources, AudioClip audioClip)
     {
         foreach (AudioSource audioSource in audioSources)

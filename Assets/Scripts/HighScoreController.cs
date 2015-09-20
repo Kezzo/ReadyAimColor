@@ -1,12 +1,16 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// Singleton to handle highscores in the Game.
+/// </summary>
 public class HighScoreController : MonoBehaviour {
 
     [SerializeField]
     private Text m_gameplayHighScoreText;
 
     private int m_gameplayHighScore = 0;
+    public int GamePlayHighScore { get { return m_gameplayHighScore; } }
 
     public static HighScoreController Instance { get; private set; }
 
@@ -30,10 +34,5 @@ public class HighScoreController : MonoBehaviour {
     {
         m_gameplayHighScore += highScoreToAdd;
         m_gameplayHighScoreText.text = m_gameplayHighScore.ToString();
-    }
-
-    public int GetCurrentHighScore()
-    {
-        return m_gameplayHighScore;
     }
 }
