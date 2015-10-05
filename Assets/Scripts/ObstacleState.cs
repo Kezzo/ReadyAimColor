@@ -12,7 +12,7 @@ public class ObstacleState : MonoBehaviour {
     private GameObject m_obstacleModel;
 
     [SerializeField]
-    private ParticleSystem m_obstacleDestructionPFX;
+    private ObstacleParticle m_obstacleParticle;
 
     private MeshRenderer m_meshRenderer;
 
@@ -61,16 +61,8 @@ public class ObstacleState : MonoBehaviour {
     /// <param name="obstacle"></param>
     public void HandleObstacleCollision()
     {
+        m_obstacleParticle.PlayPfxWithColor(m_colorState, this.transform);
+
         gameObject.SetActive(false);
-
-        ParticleSystemRenderer particleSystemRenderer = m_obstacleDestructionPFX.GetComponent<ParticleSystemRenderer>();
-
-        if (particleSystemRenderer != null)
-            particleSystemRenderer.material = m_stateMaterials[(int) m_colorState];
-
-        GameObject obstacleDestructionPFXGO = SimplePool.Spawn(m_obstacleDestructionPFX.gameObject, gameObject.transform.position, Quaternion.identity) as GameObject;
-        obstacleDestructionPFXGO.transform.SetParent(gameObject.transform.parent.transform);
-
-        m_obstacleDestructionPFX.Play();
     }
 }

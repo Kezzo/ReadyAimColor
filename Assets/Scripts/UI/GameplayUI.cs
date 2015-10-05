@@ -77,7 +77,7 @@ public class GameplayUI : MonoBehaviour {
     public void ShowGameOverMenu()
 	{
         m_playButtonOnCD = true;
-        CountPlayerButtonCDDown(1.0f);
+        StartCoroutine(CountPlayerButtonCDDown(1.0f));
 
         int currentHighScore = HighScoreController.Instance.GamePlayHighScore;
         PlayerPrefs.SetInt("LastHighScore", currentHighScore);

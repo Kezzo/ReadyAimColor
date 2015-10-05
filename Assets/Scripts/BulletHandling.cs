@@ -15,6 +15,7 @@ public class BulletHandling : MonoBehaviour {
 	[SerializeField]
 	private MeshRenderer m_bulletMeshRend;
 
+    [SerializeField]
 	private float m_speed = 50.0f;
 
     private ColorState m_bulletColorState = ColorState.GREEN;

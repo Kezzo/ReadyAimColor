@@ -217,7 +217,7 @@ public class PlayerControls : MonoBehaviour {
 
         if (Mathf.Abs(gyroScopeX) > 0.02f)
         {
-            transform.position = Vector3.Lerp(m_playerLerpPositionLeft.position, m_playerLerpPositionRight.position, m_movementFraction);
+            transform.position = Vector3.Lerp(m_playerLerpPositionRight.position, m_playerLerpPositionLeft.position, m_movementFraction);
         }
 	}
 
