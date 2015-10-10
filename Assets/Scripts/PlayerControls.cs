@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using Assets.Scripts.Data;
+using Assets.Scripts.UI;
 using UnityEngine;
 
 /// <summary>
@@ -55,7 +57,7 @@ public class PlayerControls : MonoBehaviour {
     private bool m_gameIsPaused;
 
     private AudioManager m_AudioManager;
-    private ColorState m_playerColorState = ColorState.GREEN;
+    private ColorState m_playerColorState = ColorState.Green;
 
     // Use this for initialization
     void Start () 
@@ -91,9 +93,10 @@ public class PlayerControls : MonoBehaviour {
 	void OnTriggerEnter(Collider other)
 	{
 		m_lives--;
-		m_gameplayUI.UpdateHealthUI(m_lives);
+		m_gameplayUI.UpdateHealthUi(m_lives);
 
         ObstacleState obstacleStateScript = other.GetComponent<ObstacleState>();
+
         if (obstacleStateScript != null)
             obstacleStateScript.HandleObstacleCollision();
 
@@ -112,7 +115,7 @@ public class PlayerControls : MonoBehaviour {
 	public void PauseGame(bool pauseIt)
 	{
 		m_gameIsPaused = pauseIt;
-		m_worldGenScript.toggleWorldGeneration (m_gameIsPaused);
+		m_worldGenScript.ToggleWorldGeneration (m_gameIsPaused);
 	}
 
     /// <summary>
@@ -120,16 +123,17 @@ public class PlayerControls : MonoBehaviour {
     /// Calls the need methods to fulfill the color switch.
     /// </summary>
 	public void ToggleState()
-	{
-		if(m_playerColorState == ColorState.GREEN)
-		{
-			HandlePlayerStateChange(ColorState.YELLOW);
-		}
-		else if(m_playerColorState == ColorState.YELLOW)
-		{
-			HandlePlayerStateChange(ColorState.GREEN);
-		}
-	}
+    {
+        switch (m_playerColorState)
+        {
+            case ColorState.Green:
+                HandlePlayerStateChange(ColorState.Yellow);
+                break;
+            case ColorState.Yellow:
+                HandlePlayerStateChange(ColorState.Green);
+                break;
+        }
+    }
 
     /// <summary>
     /// Called when the player pressed the shoot button.
@@ -137,19 +141,17 @@ public class PlayerControls : MonoBehaviour {
     /// </summary>
 	public void HandlePlayerShot()
 	{
-		if(!m_gameIsPaused)
-		{
-            m_AudioManager.PlayShootSound();
+        if (m_gameIsPaused) return;
+        m_AudioManager.PlayShootSound();
 
-            foreach (Transform shootPosition in m_shootPositionList)
-			{
-				GameObject bullet = SimplePool.Spawn(m_bulletPrefab, shootPosition.position, shootPosition.rotation);
-				bullet.transform.parent = m_bulletParent;
+        foreach (Transform shootPosition in m_shootPositionList)
+        {
+            GameObject bullet = SimplePool.Spawn(m_bulletPrefab, shootPosition.position, shootPosition.rotation);
+            bullet.transform.parent = m_bulletParent;
 
-				BulletHandling bulletHandlingScript = bullet.GetComponent<BulletHandling>();
-				bulletHandlingScript.SetBulletState(m_playerColorState);
-			}
-		}
+            BulletHandling bulletHandlingScript = bullet.GetComponent<BulletHandling>();
+            bulletHandlingScript.SetBulletState(m_playerColorState);
+        }
 	}
 
     /// <summary>
@@ -159,32 +161,31 @@ public class PlayerControls : MonoBehaviour {
     /// <param name="newPlayerColorState">The new player color state.</param>
     private void HandlePlayerStateChange(ColorState newPlayerColorState)
 	{
-		if(m_playerColorState != newPlayerColorState)
-		{
-			Material[] currentMaterials = m_playerMeshRend.sharedMaterials;
-			m_playerColorState = newPlayerColorState;
+        if (m_playerColorState == newPlayerColorState) return;
+
+        Material[] currentMaterials = m_playerMeshRend.sharedMaterials;
+        m_playerColorState = newPlayerColorState;
 			
-			switch(m_playerColorState)
-			{
-				case ColorState.GREEN:
-                    currentMaterials[1] = m_stateMaterials[0];
-					m_gameplayUI.ToggleColorSwitchUI(newPlayerColorState);
+        switch(m_playerColorState)
+        {
+            case ColorState.Green:
+                currentMaterials[1] = m_stateMaterials[0];
+                m_gameplayUI.ToggleColorSwitchUi(newPlayerColorState);
 
-                    m_engineParticleRenderer[0].material = m_stateMaterials[0];
-                    m_engineParticleRenderer[1].material = m_stateMaterials[0];
-                    break;
+                m_engineParticleRenderer[0].material = m_stateMaterials[0];
+                m_engineParticleRenderer[1].material = m_stateMaterials[0];
+                break;
 
-				case ColorState.YELLOW:
-                    currentMaterials[1] = m_stateMaterials[1];
-					m_gameplayUI.ToggleColorSwitchUI(newPlayerColorState);
+            case ColorState.Yellow:
+                currentMaterials[1] = m_stateMaterials[1];
+                m_gameplayUI.ToggleColorSwitchUi(newPlayerColorState);
 
-                    m_engineParticleRenderer[0].material = m_stateMaterials[1];
-                    m_engineParticleRenderer[1].material = m_stateMaterials[1];
-                    break;
-			}
+                m_engineParticleRenderer[0].material = m_stateMaterials[1];
+                m_engineParticleRenderer[1].material = m_stateMaterials[1];
+                break;
+        }
 
-			m_playerMeshRend.sharedMaterials = currentMaterials;
-		}
+        m_playerMeshRend.sharedMaterials = currentMaterials;
 	}
 
     /// <summary>
@@ -225,7 +226,7 @@ public class PlayerControls : MonoBehaviour {
     /// Toggles the engine particles effects.
     /// </summary>
     /// <param name="setActive">To state if the pfx should be toggled on or off.</param>
-    private void ToggleEnginePFX(bool setActive)
+    private void ToggleEnginePfx(bool setActive)
     {
         foreach (ParticleSystem particleSystem in m_engineParticleSystems)
         {

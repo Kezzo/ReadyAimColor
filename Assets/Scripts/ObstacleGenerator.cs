@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Assets.Scripts.Data;
 using UnityEngine;
 
 /// <summary>
@@ -39,7 +40,7 @@ public class ObstacleGenerator : MonoBehaviour {
 
         for (int i=0; i<m_obstaclesFirstRow.Count; i++)
 		{
-			m_obstaclesFirstRow[i].obstacleStateScript.setStateAndActive(generatedIDs[i]);
+			m_obstaclesFirstRow[i].ObstacleStateScript.SetStateAndActive(generatedIDs[i]);
 		}
 
 		DisableAllObstacles(m_obstaclesSecondRow);
@@ -51,7 +52,7 @@ public class ObstacleGenerator : MonoBehaviour {
 
         for (int i=0; i<m_obstaclesFirstRow.Count; i++)
 		{
-			m_obstaclesSecondRow[i].obstacleStateScript.setStateAndActive(generatedIDs[i]);
+			m_obstaclesSecondRow[i].ObstacleStateScript.SetStateAndActive(generatedIDs[i]);
 		}
 	}
 
@@ -144,7 +145,7 @@ public class ObstacleGenerator : MonoBehaviour {
 	{
 		foreach(Obstacle obstacles in obstacleList)
 		{
-			obstacles.obstacleGO.SetActive(false);
+			obstacles.ObstacleGo.SetActive(false);
 		}
 	}
 }

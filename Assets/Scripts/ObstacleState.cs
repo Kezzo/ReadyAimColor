@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Assets.Scripts.Data;
+using UnityEngine;
 
 /// <summary>
 /// Each object reprents and handles the state of an obstacle
@@ -16,14 +17,14 @@ public class ObstacleState : MonoBehaviour {
 
     private MeshRenderer m_meshRenderer;
 
-    private ColorState m_colorState = ColorState.DISABLED;
+    private ColorState m_colorState = ColorState.Disabled;
     public ColorState ObstacleColorState { get { return m_colorState; } }
 
     /// <summary>
     /// Activates the Obstacle and sets a certain stage depending on the input parameter.
     /// </summary>
     /// <param name="stateID">The id for the stagethe obstacle should have.</param>
-	public void setStateAndActive(int stateID)
+	public void SetStateAndActive(int stateID)
 	{
 		if(m_meshRenderer == null)
 		{
@@ -39,12 +40,14 @@ public class ObstacleState : MonoBehaviour {
 			
 			switch(stateID)
 			{
-			    case 1: m_colorState = ColorState.GREEN;
+			    case 1:
+                    m_colorState = ColorState.Green;
 				    break;
-			    case 2: m_colorState = ColorState.YELLOW;
+			    case 2:
+                    m_colorState = ColorState.Yellow;
 				    break;
                 case 3:
-                    m_colorState = ColorState.RED;
+                    m_colorState = ColorState.Red;
                     break;
             }
 		}

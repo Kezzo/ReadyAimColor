@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
+using Assets.Scripts.Data;
 
 /// <summary>
 /// Class to handle MapPart/World generation.
@@ -78,7 +79,7 @@ public class WorldGeneration : MonoBehaviour {
         {
             foreach (MapPart mapPart in m_mapParts.ToArray())
             {
-                if ((mapPart.EndPointGO.transform.position.z + m_mapPartMargin) < m_playerGameObject.transform.position.z)
+                if ((mapPart.EndPointGameObject.transform.position.z + m_mapPartMargin) < m_playerGameObject.transform.position.z)
                 {
                     m_generatedMapPartsThisSession++;
                     m_mapPartSpawnPosition = new Vector3(0.0f, 0.0f, (m_generatedMapPartsThisSession - 1) * m_mapPartLength);
@@ -99,7 +100,7 @@ public class WorldGeneration : MonoBehaviour {
     /// Can be called to pause or unpause the world generation.
     /// </summary>
     /// <param name="newPauseStatus"></param>
-	public void toggleWorldGeneration(bool newPauseStatus)
+	public void ToggleWorldGeneration(bool newPauseStatus)
 	{
 		m_gameIsPaused = newPauseStatus;
 	}
@@ -135,13 +136,13 @@ public class WorldGeneration : MonoBehaviour {
 		if(m_mapParts.Count < m_generalMapPartCount)
 		{
 			currentMapPart = CreateMapPart(spawnPosition);
-			currentMapPartGO = currentMapPart.MapPartGO;
+			currentMapPartGO = currentMapPart.MapPartGameObject;
 		}
 		else
 		{
 			//Reposition rather than destroying and instantiating
 			currentMapPart = mapPartToSpawn;
-			currentMapPartGO = currentMapPart.MapPartGO;
+			currentMapPartGO = currentMapPart.MapPartGameObject;
 			currentMapPartGO.transform.position = spawnPosition;
 		}
 

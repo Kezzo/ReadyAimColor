@@ -1,7 +1,10 @@
-﻿public enum ColorState {
+﻿namespace Assets.Scripts.Data
+{
+    public enum ColorState {
 
-    GREEN,
-    YELLOW,
-    RED,
-    DISABLED
+        Green,
+        Yellow,
+        Red,
+        Disabled
+    }
 }

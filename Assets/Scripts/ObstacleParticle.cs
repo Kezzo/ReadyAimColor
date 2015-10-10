@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Assets.Scripts.Data;
+using UnityEngine;
 
 public class ObstacleParticle : MonoBehaviour {
 
@@ -15,8 +16,8 @@ public class ObstacleParticle : MonoBehaviour {
     {
         m_particleSystemRenderer.material = m_stateMaterials[(int)colorState];
 
-        GameObject obstacleDestructionPFXGO = SimplePool.Spawn(this.gameObject, obstacleTransform.position, Quaternion.identity) as GameObject;
-        obstacleDestructionPFXGO.transform.SetParent(obstacleTransform.parent);
+        GameObject obstacleDestruction = SimplePool.Spawn(this.gameObject, obstacleTransform.position, Quaternion.identity) as GameObject;
+        obstacleDestruction.transform.SetParent(obstacleTransform.parent);
 
         m_particleSystem.Play();
     }

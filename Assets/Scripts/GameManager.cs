@@ -5,7 +5,7 @@
 /// </summary>
 public class GameManager : MonoBehaviour {
 
-	public void startGame()
+	public void StartGame()
 	{
 		Application.LoadLevel ("Gameplay1");
 	}

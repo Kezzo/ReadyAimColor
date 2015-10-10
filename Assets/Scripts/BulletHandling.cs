@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using Assets.Scripts.Data;
 using UnityEngine;
 
 /// <summary>
@@ -18,7 +19,7 @@ public class BulletHandling : MonoBehaviour {
     [SerializeField]
 	private float m_speed = 50.0f;
 
-    private ColorState m_bulletColorState = ColorState.GREEN;
+    private ColorState m_bulletColorState = ColorState.Green;
 
     private HighScoreController m_highScoreController;
 
@@ -62,9 +63,9 @@ public class BulletHandling : MonoBehaviour {
 
         switch (obstacleStateScript.ObstacleColorState)
 		{
-			case ColorState.GREEN: OnGreenObstacleHit(other.gameObject, obstacleStateScript);
+			case ColorState.Green: OnGreenObstacleHit(other.gameObject, obstacleStateScript);
 					break;
-			case ColorState.YELLOW: OnYellowObstacleHit(other.gameObject, obstacleStateScript);
+			case ColorState.Yellow: OnYellowObstacleHit(other.gameObject, obstacleStateScript);
 					break;
 		}
 
@@ -78,7 +79,7 @@ public class BulletHandling : MonoBehaviour {
     /// <param name="obstacleStateScript">The obstacle state script of the obstacle</param>
 	void OnGreenObstacleHit(GameObject obstacle, ObstacleState obstacleStateScript)
 	{
-		if(m_bulletColorState == ColorState.GREEN)
+		if(m_bulletColorState == ColorState.Green)
 		{
             obstacleStateScript.HandleObstacleCollision();
             m_highScoreController.UpdateHighScoreBy(1);
@@ -92,7 +93,7 @@ public class BulletHandling : MonoBehaviour {
     /// <param name="obstacleStateScript">The obstacle state script of the obstacle</param>
 	void OnYellowObstacleHit(GameObject obstacle, ObstacleState obstacleStateScript)
 	{
-		if(m_bulletColorState == ColorState.YELLOW)
+		if(m_bulletColorState == ColorState.Yellow)
 		{
             obstacleStateScript.HandleObstacleCollision();
             m_highScoreController.UpdateHighScoreBy(1);
@@ -114,9 +115,9 @@ public class BulletHandling : MonoBehaviour {
 
 			switch(playerColorState)
 			{
-			    case ColorState.GREEN: m_bulletMeshRend.sharedMaterial = m_stateMaterials[0];
+			    case ColorState.Green: m_bulletMeshRend.sharedMaterial = m_stateMaterials[0];
 				    break;
-			    case ColorState.YELLOW: m_bulletMeshRend.sharedMaterial = m_stateMaterials[1];
+			    case ColorState.Yellow: m_bulletMeshRend.sharedMaterial = m_stateMaterials[1];
 				    break;
 			}
 			m_bulletColorState = playerColorState;
