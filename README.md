@@ -6,4 +6,5 @@ The Code, 3D Art, UI sprites and Game Design is made by Kezzo.
 
 Music and Sound effects are made by Smoke.
 
+![](gameplay.gif)
 ![](http://puu.sh/siqEg/cf8fb9aaba.jpg)
